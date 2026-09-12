@@ -2,35 +2,29 @@ import asyncio
 import logging
 import os
 from aiogram import Bot, Dispatcher
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
-from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.filters import Command
+from aiogram.types import Message
 from dotenv import load_dotenv
-
-from db.session import init_db, SessionLocal
-from bot.handlers import start, mines
 
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 
-bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-dp = Dispatcher(storage=MemoryStorage())
+bot = Bot(token=TOKEN)
+dp = Dispatcher()
 
 
-async def db_middleware(handler, event, data):
-    async with SessionLocal() as session:
-        data["session"] = session
-        return await handler(event, data)
+@dp.message(Command("start"))
+async def cmd_start(message: Message):
+    await message.answer(f"Привет, {message.from_user.first_name}! Я бот Garila. 🎮")
+
+
+@dp.message(Command("help"))
+async def cmd_help(message: Message):
+    await message.answer("Команды: /start, /help")
 
 
 async def main():
     logging.basicConfig(level=logging.INFO)
-    await init_db()
-
-    dp.update.middleware(db_middleware)
-    dp.include_router(start.router)
-    dp.include_router(mines.router)
-
     print("✅ Бот запущен!")
     await dp.start_polling(bot)
 
