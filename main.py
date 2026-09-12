@@ -1,37 +1,39 @@
 import asyncio
 import logging
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command
-from aiogram.types import Message
 import os
+from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
+from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
+
+from db.session import init_db, SessionLocal
+from bot.handlers import start, mines
 
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 
-# Создаём бота и диспетчер
-bot = Bot(token=TOKEN)
-dp = Dispatcher()
+bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+dp = Dispatcher(storage=MemoryStorage())
 
-# Обработчик команды /start
-@dp.message(Command("start"))
-async def cmd_start(message: Message):
-    await message.answer(f"Привет, {message.from_user.first_name}! Я бот Garila. 🎮")
 
-# Обработчик команды /help
-@dp.message(Command("help"))
-async def cmd_help(message: Message):
-    await message.answer("Доступные команды:\n/start - Начать\n/help - Помощь")
+async def db_middleware(handler, event, data):
+    async with SessionLocal() as session:
+        data["session"] = session
+        return await handler(event, data)
 
-# Эхо-бот (отвечает на любой текст) — убери, если не нужно
-@dp.message()
-async def echo_handler(message: Message):
-    await message.answer(f"Ты написал: {message.text}")
 
 async def main():
     logging.basicConfig(level=logging.INFO)
-    print("✅ Бот Garila запущен!")
+    await init_db()
+
+    dp.update.middleware(db_middleware)
+    dp.include_router(start.router)
+    dp.include_router(mines.router)
+
+    print("✅ Бот запущен!")
     await dp.start_polling(bot)
+
 
 if __name__ == "__main__":
     asyncio.run(main())
