@@ -1,613 +1,405 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>BERM Casino</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            background: radial-gradient(ellipse at top, #15151f 0%, #0a0a0f 60%);
-            color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            min-height: 100vh;
-            padding: 0 0 110px 0;
-            overflow-x: hidden;
-            letter-spacing: -0.2px;
-        }
-
-        /* ВЕРХНЯЯ ПАНЕЛЬ */
-        .top-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 16px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: linear-gradient(180deg, #0a0a0f 70%, transparent);
-        }
-        .balance-pill {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #1e1e2a, #15151f);
-            border: 1px solid #2a2a38;
-            padding: 6px 18px 6px 6px;
-            border-radius: 30px;
-            font-size: 15px;
-            font-weight: 800;
-            box-shadow: 0 4px 12px rgba(212, 163, 64, 0.08);
-        }
-        .balance-pill .coin {
-            background: radial-gradient(circle at 30% 30%, #f9d976, #d4a340 55%, #8a6317);
-            border-radius: 50%;
-            width: 28px; height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 0 1px 1px rgba(0,0,0,0.4);
-            box-shadow:
-                inset 0 -2px 3px rgba(0,0,0,0.35),
-                inset 0 2px 3px rgba(255,255,255,0.35),
-                0 2px 6px rgba(212,163,64,0.4);
-        }
-        .user-pill {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #1e1e2a, #15151f);
-            border: 1px solid #2a2a38;
-            padding: 4px 12px 4px 14px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 700;
-        }
-        .user-avatar {
-            width: 28px; height: 28px;
-            background: radial-gradient(circle at 30% 30%, #f9d976, #d4a340 55%, #8a6317);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 900;
-            box-shadow: inset 0 -2px 3px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.3);
-        }
-
-        /* ПОИСК */
-        .search-row {
-            display: flex;
-            gap: 10px;
-            padding: 0 16px 20px 16px;
-        }
-        .search-input {
-            flex: 1;
-            background: linear-gradient(135deg, #1a1a24, #14141d);
-            border: 1px solid #25252f;
-            border-radius: 14px;
-            padding: 13px 16px 13px 44px;
-            color: #fff;
-            font-size: 14px;
-            font-family: inherit;
-            outline: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4-4'/></svg>");
-            background-repeat: no-repeat;
-            background-position: 14px center;
-        }
-        .search-input::placeholder { color: #555; }
-        .search-btn {
-            background: linear-gradient(135deg, #1e1e2a, #15151f);
-            border: 1px solid #2a2a38;
-            color: #ccc;
-            border-radius: 14px;
-            padding: 0 20px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        /* ЗАГОЛОВКИ */
-        .section-title {
-            padding: 8px 16px 14px 16px;
-            font-size: 21px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .section-title .ico {
-            font-size: 24px;
-            filter: drop-shadow(0 0 8px rgba(255, 150, 50, 0.6));
-        }
-        .section-title .ico.star {
-            filter: drop-shadow(0 0 8px rgba(255, 203, 61, 0.7));
-        }
-
-        /* ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ */
-        .games-row {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 0 16px 24px 16px;
-            scrollbar-width: none;
-        }
-        .games-row::-webkit-scrollbar { display: none; }
-
-        .game-card {
-            min-width: 112px;
-            background: linear-gradient(160deg, #1a1a26 0%, #121219 100%);
-            border: 1px solid #23232f;
-            border-radius: 22px;
-            padding: 12px 8px 14px 8px;
-            text-align: center;
-            cursor: pointer;
-            color: #fff;
-            font-family: inherit;
-            position: relative;
-            flex-shrink: 0;
-            transition: transform 0.1s, box-shadow 0.15s;
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.04),
-                0 4px 12px rgba(0,0,0,0.4);
-        }
-        .game-card:active { transform: scale(0.96); }
-
-        .game-badge {
-            position: absolute;
-            top: 10px; left: 10px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.08);
-            color: #fff;
-            font-size: 9px;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 8px;
-            letter-spacing: 0.3px;
-            backdrop-filter: blur(6px);
-        }
-        .game-badge.top   { color: #ff8a3d; box-shadow: 0 0 10px rgba(255, 138, 61, 0.15); }
-        .game-badge.fast  { color: #ff5d5d; box-shadow: 0 0 10px rgba(255, 93, 93, 0.15); }
-        .game-badge.luck  { color: #b26bff; box-shadow: 0 0 10px rgba(178, 107, 255, 0.15); }
-
-        .game-emoji-wrap {
-            position: relative;
-            width: 68px;
-            height: 68px;
-            margin: 24px auto 10px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .game-emoji-wrap::before {
-            content: "";
-            position: absolute;
-            inset: -6px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.10) 0%, transparent 65%);
-            z-index: 0;
-        }
-        .game-emoji {
-            position: relative;
-            z-index: 1;
-            font-size: 54px;
-            line-height: 1;
-            filter:
-                drop-shadow(0 4px 8px rgba(0,0,0,0.5))
-                drop-shadow(0 0 12px rgba(255,255,255,0.08));
-        }
-        .game-name {
-            font-size: 15px;
-            font-weight: 800;
-            margin-top: 6px;
-        }
-        .game-type {
-            font-size: 11px;
-            color: #6a6a7a;
-            margin-top: 3px;
-        }
-
-        /* МИНИ-СПИСОК */
-        .mini-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            padding: 0 16px 24px 16px;
-        }
-        .mini-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(160deg, #1a1a26 0%, #121219 100%);
-            border: 1px solid #23232f;
-            border-radius: 18px;
-            padding: 14px;
-            color: #fff;
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            text-align: left;
-            transition: transform 0.1s;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-        }
-        .mini-item:active { transform: scale(0.97); }
-        .mini-item .ico {
-            font-size: 26px;
-            flex-shrink: 0;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
-        }
-        .mini-item .arrow { margin-left: auto; color: #555; font-size: 18px; }
-
-        /* ШИРОКИЕ КАРТОЧКИ */
-        .wide-card {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            background: linear-gradient(160deg, #1a1a26 0%, #121219 100%);
-            border: 1px solid #23232f;
-            border-radius: 20px;
-            padding: 16px;
-            margin: 0 16px 10px 16px;
-            cursor: pointer;
-            color: #fff;
-            font-family: inherit;
-            width: calc(100% - 32px);
-            text-align: left;
-            transition: transform 0.1s;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-        }
-        .wide-card:active { transform: scale(0.98); }
-        .wide-card .ico {
-            font-size: 34px;
-            flex-shrink: 0;
-            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
-        }
-        .wide-card .info { flex: 1; }
-        .wide-card .title { font-size: 15px; font-weight: 800; margin-bottom: 3px; }
-        .wide-card .sub { font-size: 12px; color: #777; line-height: 1.35; }
-        .wide-card .arrow { color: #555; font-size: 18px; }
-
-        /* НИЖНЕЕ МЕНЮ */
-        .bottom-nav {
-            position: fixed;
-            bottom: 12px;
-            left: 12px;
-            right: 12px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            background: linear-gradient(180deg, #1a1a24, #12121a);
-            border: 1px solid #25252f;
-            border-radius: 32px;
-            padding: 12px 8px;
-            box-shadow: 0 8px 28px rgba(0,0,0,0.6);
-        }
-        .nav-btn {
-            background: none;
-            border: none;
-            color: #666;
-            padding: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .nav-btn .ni {
-            font-size: 24px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
-        }
-        .nav-btn.center {
-            background: radial-gradient(circle at 30% 25%, #f9d976, #d4a340 55%, #8a6317);
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            margin-top: -26px;
-            box-shadow:
-                0 8px 22px rgba(212, 163, 64, 0.55),
-                0 0 0 4px rgba(20,20,30,0.9),
-                inset 0 -3px 5px rgba(0,0,0,0.35),
-                inset 0 3px 5px rgba(255,255,255,0.4);
-            color: #fff;
-            font-size: 28px;
-            font-weight: 900;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.35);
-        }
-
-        /* ЭКРАНЫ */
-        .screen { display: none; }
-        .screen.active { display: block; }
-        .screen-head {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-        }
-        .back-btn {
-            background: linear-gradient(160deg, #1a1a26, #121219);
-            border: 1px solid #23232f;
-            width: 42px; height: 42px;
-            border-radius: 50%;
-            color: #fff;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .screen-title { font-size: 22px; font-weight: 800; }
-        .screen-body { padding: 20px 16px; color: #999; font-size: 15px; line-height: 1.5; }
-
-        /* МОДАЛКА */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(6px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal {
-            background: linear-gradient(160deg, #1a1a26, #12121a);
-            border: 1px solid #23232f;
-            border-radius: 24px;
-            padding: 24px;
-            width: 100%;
-            max-width: 340px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-        }
-        .modal h3 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
-        .modal p { color: #888; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
-        .modal .close-btn {
-            background: linear-gradient(160deg, #262635, #1a1a24);
-            border: 1px solid #2f2f3f;
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            width: 100%;
-            cursor: pointer;
-            font-family: inherit;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>BERM</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(ellipse at top,#15151f,#0a0a0f 60%);color:#fff;font-family:-apple-system,sans-serif;min-height:100vh;padding:0 0 110px;overflow-x:hidden}
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;position:sticky;top:0;z-index:100;background:linear-gradient(180deg,#0a0a0f 70%,transparent)}
+.balance-pill{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1e1e2a,#15151f);border:1px solid #2a2a38;padding:6px 18px 6px 6px;border-radius:30px;font-size:15px;font-weight:800}
+.coin{background:radial-gradient(circle at 30% 30%,#f9d976,#d4a340 55%,#8a6317);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;box-shadow:inset 0 -2px 3px rgba(0,0,0,.35),inset 0 2px 3px rgba(255,255,255,.35),0 2px 6px rgba(212,163,64,.4)}
+.user-pill{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1e1e2a,#15151f);border:1px solid #2a2a38;padding:4px 12px 4px 14px;border-radius:30px;font-size:14px;font-weight:700}
+.user-avatar{width:28px;height:28px;background:radial-gradient(circle at 30% 30%,#f9d976,#d4a340 55%,#8a6317);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900}
+.search-row{display:flex;gap:10px;padding:0 16px 20px}
+.search-input{flex:1;background:linear-gradient(135deg,#1a1a24,#14141d);border:1px solid #25252f;border-radius:14px;padding:13px 16px 13px 44px;color:#fff;font-size:14px;font-family:inherit;outline:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4-4'/></svg>");background-repeat:no-repeat;background-position:14px center}
+.search-input::placeholder{color:#555}
+.search-btn{background:linear-gradient(135deg,#1e1e2a,#15151f);border:1px solid #2a2a38;color:#ccc;border-radius:14px;padding:0 20px;font-size:14px;font-weight:700;font-family:inherit}
+.section-title{padding:8px 16px 14px;font-size:21px;font-weight:800;display:flex;align-items:center;gap:10px}
+.section-title .ico{font-size:24px;filter:drop-shadow(0 0 8px rgba(255,150,50,.6))}
+.section-title .ico.star{filter:drop-shadow(0 0 8px rgba(255,203,61,.7))}
+.games-row{display:flex;gap:10px;overflow-x:auto;padding:0 16px 24px;scrollbar-width:none}
+.games-row::-webkit-scrollbar{display:none}
+.game-card{min-width:112px;background:linear-gradient(160deg,#1a1a26,#121219);border:1px solid #23232f;border-radius:22px;padding:12px 8px 14px;text-align:center;color:#fff;font-family:inherit;position:relative;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 4px 12px rgba(0,0,0,.4);cursor:pointer;transition:transform .1s}
+.game-card:active{transform:scale(.96)}
+.game-badge{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:#fff;font-size:9px;font-weight:800;padding:4px 8px;border-radius:8px;letter-spacing:.3px;backdrop-filter:blur(6px)}
+.game-badge.top{color:#ff8a3d}.game-badge.fast{color:#ff5d5d}.game-badge.luck{color:#b26bff}
+.game-emoji{font-size:54px;line-height:1;margin:24px 0 10px;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)) drop-shadow(0 0 12px rgba(255,255,255,.08))}
+.game-name{font-size:15px;font-weight:800;margin-top:6px}
+.game-type{font-size:11px;color:#6a6a7a;margin-top:3px}
+.mini-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 24px}
+.mini-item{display:flex;align-items:center;gap:10px;background:linear-gradient(160deg,#1a1a26,#121219);border:1px solid #23232f;border-radius:18px;padding:14px;color:#fff;font-family:inherit;font-size:14px;font-weight:800;text-align:left;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);transition:transform .1s}
+.mini-item:active{transform:scale(.97)}
+.mini-item .ico{font-size:26px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+.mini-item .arrow{margin-left:auto;color:#555;font-size:18px}
+.wide-card{display:flex;align-items:center;gap:14px;background:linear-gradient(160deg,#1a1a26,#121219);border:1px solid #23232f;border-radius:20px;padding:16px;margin:0 16px 10px;color:#fff;font-family:inherit;width:calc(100% - 32px);text-align:left;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);transition:transform .1s}
+.wide-card:active{transform:scale(.98)}
+.wide-card .ico{font-size:34px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
+.wide-card .info{flex:1}
+.wide-card .title{font-size:15px;font-weight:800;margin-bottom:3px}
+.wide-card .sub{font-size:12px;color:#777;line-height:1.35}
+.wide-card .arrow{color:#555;font-size:18px}
+.bottom-nav{position:fixed;bottom:12px;left:12px;right:12px;display:flex;justify-content:space-around;align-items:center;background:linear-gradient(180deg,#1a1a24,#12121a);border:1px solid #25252f;border-radius:32px;padding:12px 8px;box-shadow:0 8px 28px rgba(0,0,0,.6)}
+.nav-btn{background:none;border:none;color:#666;padding:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.nav-btn .ni{font-size:24px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+.nav-btn.center{background:radial-gradient(circle at 30% 25%,#f9d976,#d4a340 55%,#8a6317);width:60px;height:60px;border-radius:50%;margin-top:-26px;box-shadow:0 8px 22px rgba(212,163,64,.55),0 0 0 4px rgba(20,20,30,.9),inset 0 -3px 5px rgba(0,0,0,.35),inset 0 3px 5px rgba(255,255,255,.4);color:#fff;font-size:28px;font-weight:900}
+.screen{display:none}.screen.active{display:block}
+.screen-head{display:flex;align-items:center;gap:12px;padding:16px}
+.back-btn{background:linear-gradient(160deg,#1a1a26,#121219);border:1px solid #23232f;width:42px;height:42px;border-radius:50%;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.screen-title{font-size:22px;font-weight:800}
+.screen-body{padding:20px 16px;color:#999;font-size:15px;line-height:1.5}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-overlay.active{display:flex}
+.modal{background:linear-gradient(160deg,#1a1a26,#12121a);border:1px solid #23232f;border-radius:24px;padding:24px;width:100%;max-width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+.modal h3{font-size:20px;font-weight:800;margin-bottom:8px}
+.modal p{color:#888;font-size:14px;margin-bottom:20px;line-height:1.4}
+.modal .close-btn{background:linear-gradient(160deg,#262635,#1a1a24);border:1px solid #2f2f3f;color:#fff;padding:12px 24px;border-radius:14px;font-size:15px;font-weight:700;width:100%;font-family:inherit;cursor:pointer}
+/* СЛОТЫ */
+.slots-wrap{padding:20px 16px;text-align:center}
+.reels{display:flex;justify-content:center;gap:10px;margin:30px 0}
+.reel{width:80px;height:100px;background:linear-gradient(160deg,#1a1a26,#121219);border:2px solid #2a2a38;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:900;color:#fff;transition:transform .3s;box-shadow:inset 0 3px 6px rgba(0,0,0,.5),inset 0 -3px 6px rgba(255,255,255,.05)}
+.reel.spinning{animation:spin .12s linear infinite}
+@keyframes spin{0%{transform:translateY(-10px)}50%{transform:translateY(10px)}100%{transform:translateY(-10px)}}
+.slot-btn{background:radial-gradient(circle at 30% 25%,#f9d976,#d4a340 55%,#8a6317);color:#fff;border:none;padding:16px 40px;border-radius:18px;font-size:18px;font-weight:900;box-shadow:0 6px 20px rgba(212,163,64,.5),inset 0 -3px 5px rgba(0,0,0,.35),inset 0 3px 5px rgba(255,255,255,.4);font-family:inherit;cursor:pointer;margin-top:10px}
+.slot-btn:disabled{opacity:.5}
+.slot-msg{margin-top:18px;font-size:16px;font-weight:700;min-height:24px}
+.bet-row{display:flex;justify-content:center;gap:8px;margin:20px 0}
+.bet-btn{background:linear-gradient(160deg,#1a1a26,#121219);border:1px solid #2a2a38;color:#ccc;padding:10px 18px;border-radius:12px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.bet-btn.active{background:linear-gradient(160deg,#262635,#1a1a24);border-color:#d4a340;color:#fff}
+/* МИНЫ */
+.mines-wrap{padding:20px 16px}
+.mines-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0}
+.mine-cell{aspect-ratio:1;background:linear-gradient(160deg,#1a1a26,#121219);border:1px solid #2a2a38;border-radius:12px;font-size:24px;color:#fff;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .1s;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.mine-cell:active{transform:scale(.95)}
+.mine-cell.opened{background:linear-gradient(160deg,#1e3a2e,#122a1e);border-color:#2ec46e}
+.mine-cell.mine{background:linear-gradient(160deg,#3a1e1e,#2a1212);border-color:#c42e46}
+.mine-cell:disabled{cursor:default}
+.mines-status{display:flex;justify-content:space-between;padding:12px 4px;font-size:14px;color:#888;font-weight:600}
+.mines-status .val{color:#fff;font-weight:800}
+.cashout-btn{background:radial-gradient(circle at 30% 25%,#f9d976,#d4a340 55%,#8a6317);color:#fff;border:none;padding:14px 30px;border-radius:16px;font-size:16px;font-weight:900;width:100%;margin-top:12px;font-family:inherit;cursor:pointer;box-shadow:0 6px 18px rgba(212,163,64,.4)}
+.cashout-btn:disabled{opacity:.4}
+</style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <div class="balance-pill">
-            <span class="coin">$</span>
-            <span id="balance">10 000</span>
-        </div>
-        <div class="user-pill">
-            <span id="username">Игрок</span>
-            <div class="user-avatar" id="user-avatar">P</div>
-        </div>
+<div class="top-bar">
+  <div class="balance-pill"><span class="coin">$</span><span id="balance">…</span></div>
+  <div class="user-pill"><span id="username">…</span><div class="user-avatar" id="user-avatar">?</div></div>
+</div>
+
+<div id="screen-games" class="screen active">
+  <div class="search-row">
+    <input class="search-input" id="search" placeholder="Найти игру" oninput="filterGames()">
+    <button class="search-btn" onclick="filterGames()">Поиск</button>
+  </div>
+
+  <div class="section-title"><span class="ico">🔥</span> Популярные игры за 24 часа</div>
+  <div class="games-row">
+    <button class="game-card" data-name="Слоты" onclick="go('slots')">
+      <div class="game-badge top">🔥 TOP</div>
+      <span class="game-emoji">🎰</span>
+      <div class="game-name">Слоты</div><div class="game-type">Игра</div>
+    </button>
+    <button class="game-card" data-name="Мины" onclick="go('mines')">
+      <div class="game-badge top">🔥 TOP</div>
+      <span class="game-emoji">💣</span>
+      <div class="game-name">Мины</div><div class="game-type">Игра</div>
+    </button>
+    <button class="game-card" data-name="Кости" onclick="go('blank')">
+      <div class="game-badge top">🔥 TOP</div>
+      <span class="game-emoji">🎲</span>
+      <div class="game-name">Кости</div><div class="game-type">Игра</div>
+    </button>
+    <button class="game-card" data-name="Боулинг" onclick="go('blank')">
+      <div class="game-badge top">🔥 TOP</div>
+      <span class="game-emoji">🎳</span>
+      <div class="game-name">Боулинг</div><div class="game-type">Игра</div>
+    </button>
+  </div>
+
+  <div class="mini-list">
+    <button class="mini-item" onclick="go('blank')"><span class="ico">🎱</span> Кено <span class="arrow">›</span></button>
+    <button class="mini-item" onclick="go('blank')"><span class="ico">🎰</span> Hi-Lo <span class="arrow">›</span></button>
+    <button class="mini-item" onclick="go('blank')"><span class="ico">🎡</span> Wheel <span class="arrow">›</span></button>
+    <button class="mini-item" onclick="go('blank')"><span class="ico">🔵</span> R&B <span class="arrow">›</span></button>
+  </div>
+
+  <div class="section-title"><span class="ico star">🌟</span> Эксклюзивные игры</div>
+  <div class="games-row">
+    <button class="game-card" data-name="Краш" onclick="go('blank')">
+      <div class="game-badge fast">FAST</div>
+      <span class="game-emoji">🚀</span>
+      <div class="game-name">Краш</div><div class="game-type">Игра</div>
+    </button>
+    <button class="game-card" data-name="Рулетка" onclick="go('blank')">
+      <div class="game-badge fast">FAST</div>
+      <span class="game-emoji">🎡</span>
+      <div class="game-name">Рулетка</div><div class="game-type">Игра</div>
+    </button>
+    <button class="game-card" data-name="Слоты" onclick="go('slots')">
+      <div class="game-badge luck">LUCK</div>
+      <span class="game-emoji">🎰</span>
+      <div class="game-name">Слоты 777</div><div class="game-type">Игра</div>
+    </button>
+    <button class="game-card" data-name="Мины" onclick="go('mines')">
+      <div class="game-badge luck">LUCK</div>
+      <span class="game-emoji">💣</span>
+      <div class="game-name">Мины</div><div class="game-type">Игра</div>
+    </button>
+  </div>
+
+  <button class="wide-card" onclick="go('blank')">
+    <span class="ico">⚔️</span>
+    <div class="info"><div class="title">PvP - Дуэль на Emoji играх</div><div class="sub">Скоро</div></div>
+    <span class="arrow">›</span>
+  </button>
+</div>
+
+<!-- СЛОТЫ -->
+<div id="screen-slots" class="screen">
+  <div class="screen-head">
+    <button class="back-btn" onclick="go('games')">←</button>
+    <div class="screen-title">🎰 Слоты 777</div>
+  </div>
+  <div class="slots-wrap">
+    <div class="reels">
+      <div class="reel" id="r1">7</div>
+      <div class="reel" id="r2">7</div>
+      <div class="reel" id="r3">7</div>
     </div>
-
-    <div id="screen-games" class="screen active">
-        <div class="search-row">
-            <input class="search-input" id="search" placeholder="Найти игру" oninput="filterGames()" />
-            <button class="search-btn" onclick="filterGames()">Поиск</button>
-        </div>
-
-        <div class="section-title"><span class="ico">🔥</span> Популярные игры за 24 часа</div>
-        <div class="games-row">
-            <button class="game-card" data-name="Кости" onclick="go('dice')">
-                <div class="game-badge top">🔥 TOP</div>
-                <div class="game-emoji-wrap"><span class="game-emoji">🎲</span></div>
-                <div class="game-name">Кости</div>
-                <div class="game-type">Игра</div>
-            </button>
-            <button class="game-card" data-name="Боулинг" onclick="go('bowling')">
-                <div class="game-badge top">🔥 TOP</div>
-                <div class="game-emoji-wrap"><span class="game-emoji">🎳</span></div>
-                <div class="game-name">Боулинг</div>
-                <div class="game-type">Игра</div>
-            </button>
-            <button class="game-card" data-name="Мины" onclick="go('mines')">
-                <div class="game-badge top">🔥 TOP</div>
-                <div class="game-emoji-wrap"><span class="game-emoji">💣</span></div>
-                <div class="game-name">Мины</div>
-                <div class="game-type">Игра</div>
-            </button>
-            <button class="game-card" data-name="Футбол" onclick="go('football')">
-                <div class="game-badge top">🔥 TOP</div>
-                <div class="game-emoji-wrap"><span class="game-emoji">⚽</span></div>
-                <div class="game-name">Футбол</div>
-                <div class="game-type">Игра</div>
-            </button>
-        </div>
-
-        <div class="mini-list">
-            <button class="mini-item" data-name="Кено" onclick="go('keno')">
-                <span class="ico">🎱</span> Кено <span class="arrow">›</span>
-            </button>
-            <button class="mini-item" data-name="Hi-Lo" onclick="go('hilo')">
-                <span class="ico">🎰</span> Hi-Lo <span class="arrow">›</span>
-            </button>
-            <button class="mini-item" data-name="Wheel" onclick="go('wheel')">
-                <span class="ico">🎡</span> Wheel <span class="arrow">›</span>
-            </button>
-            <button class="mini-item" data-name="R&B" onclick="go('rb')">
-                <span class="ico">🔵</span> R&B <span class="arrow">›</span>
-            </button>
-        </div>
-
-        <div class="section-title"><span class="ico star">🌟</span> Эксклюзивные игры</div>
-        <div class="games-row">
-            <button class="game-card" data-name="Краш" onclick="go('crash')">
-                <div class="game-badge fast">FAST</div>
-                <div class="game-emoji-wrap"><span class="game-emoji">🚀</span></div>
-                <div class="game-name">Краш</div>
-                <div class="game-type">Игра</div>
-            </button>
-            <button class="game-card" data-name="Рулетка" onclick="go('roulette')">
-                <div class="game-badge fast">FAST</div>
-                <div class="game-emoji-wrap"><span class="game-emoji">🎡</span></div>
-                <div class="game-name">Рулетка</div>
-                <div class="game-type">Игра</div>
-            </button>
-            <button class="game-card" data-name="Мины" onclick="go('mines')">
-                <div class="game-badge luck">LUCK</div>
-                <div class="game-emoji-wrap"><span class="game-emoji">💣</span></div>
-                <div class="game-name">Мины</div>
-                <div class="game-type">Игра</div>
-            </button>
-            <button class="game-card" data-name="Башня" onclick="go('tower')">
-                <div class="game-badge luck">LUCK</div>
-                <div class="game-emoji-wrap"><span class="game-emoji">🏰</span></div>
-                <div class="game-name">Башня</div>
-                <div class="game-type">Игра</div>
-            </button>
-        </div>
-
-        <button class="wide-card" onclick="go('pvp')">
-            <span class="ico">⚔️</span>
-            <div class="info">
-                <div class="title">PvP - Дуэль на Emoji играх</div>
-                <div class="sub">Игры: Кости, Боулинг, Дартс, Баскетбол, Футбол и Слоты</div>
-            </div>
-            <span class="arrow">›</span>
-        </button>
-
-        <button class="wide-card" onclick="go('blackjack')">
-            <span class="ico">🃏</span>
-            <div class="info">
-                <div class="title">Блэкджек</div>
-                <div class="sub">Классическая карточная игра против дилера — набери 21 и не перебери</div>
-            </div>
-            <span class="arrow">›</span>
-        </button>
-
-        <div class="mini-list">
-            <button class="mini-item" data-name="Кости" onclick="go('dice')">
-                <span class="ico">🎲</span> Кости <span class="arrow">›</span>
-            </button>
-            <button class="mini-item" data-name="Боулинг" onclick="go('bowling')">
-                <span class="ico">🎳</span> Боулинг <span class="arrow">›</span>
-            </button>
-        </div>
+    <div class="bet-row">
+      <button class="bet-btn" onclick="setBet(50,this)">50</button>
+      <button class="bet-btn active" onclick="setBet(100,this)">100</button>
+      <button class="bet-btn" onclick="setBet(500,this)">500</button>
+      <button class="bet-btn" onclick="setBet(1000,this)">1000</button>
     </div>
+    <button class="slot-btn" id="spin-btn" onclick="spin()">🎰 Крутить</button>
+    <div class="slot-msg" id="slot-msg"></div>
+  </div>
+</div>
 
-    <div id="screen-dice" class="screen">
-        <div class="screen-head">
-            <button class="back-btn" onclick="go('games')">←</button>
-            <div class="screen-title">🎲 Кости</div>
-        </div>
-        <div class="screen-body">Логика игры — следующий шаг.</div>
+<!-- МИНЫ -->
+<div id="screen-mines" class="screen">
+  <div class="screen-head">
+    <button class="back-btn" onclick="exitMines()">←</button>
+    <div class="screen-title">💣 Мины</div>
+  </div>
+  <div class="mines-wrap" id="mines-setup">
+    <p style="text-align:center;color:#888;margin-bottom:16px">Выбери ставку и начни игру</p>
+    <div class="bet-row">
+      <button class="bet-btn" onclick="setBetMines(50,this)">50</button>
+      <button class="bet-btn active" onclick="setBetMines(100,this)">100</button>
+      <button class="bet-btn" onclick="setBetMines(500,this)">500</button>
+      <button class="bet-btn" onclick="setBetMines(1000,this)">1000</button>
     </div>
-    <div id="screen-mines" class="screen">
-        <div class="screen-head">
-            <button class="back-btn" onclick="go('games')">←</button>
-            <div class="screen-title">💣 Мины</div>
-        </div>
-        <div class="screen-body">Поле 5×5 — следующий шаг.</div>
+    <button class="slot-btn" onclick="startMines()">💣 Начать</button>
+  </div>
+  <div class="mines-wrap" id="mines-play" style="display:none">
+    <div class="mines-status">
+      <span>Ставка: <span class="val" id="m-bet">0</span></span>
+      <span>Множитель: <span class="val" id="m-mult">x1.00</span></span>
+      <span>Выигрыш: <span class="val" id="m-win">0</span></span>
     </div>
-    <div id="screen-crash" class="screen">
-        <div class="screen-head">
-            <button class="back-btn" onclick="go('games')">←</button>
-            <div class="screen-title">🚀 Краш</div>
-        </div>
-        <div class="screen-body">График множителя — следующий шаг.</div>
-    </div>
-    <div id="screen-roulette" class="screen">
-        <div class="screen-head">
-            <button class="back-btn" onclick="go('games')">←</button>
-            <div class="screen-title">🎡 Рулетка</div>
-        </div>
-        <div class="screen-body">Колесо — следующий шаг.</div>
-    </div>
-    <div id="screen-bowling" class="screen">
-        <div class="screen-head">
-            <button class="back-btn" onclick="go('games')">←</button>
-            <div class="screen-title">🎳 Боулинг</div>
-        </div>
-        <div class="screen-body">Скоро.</div>
-    </div>
-    <div id="screen-blank" class="screen">
-        <div class="screen-head">
-            <button class="back-btn" onclick="go('games')">←</button>
-            <div class="screen-title" id="blank-title">Игра</div>
-        </div>
-        <div class="screen-body">Эта игра скоро появится.</div>
-    </div>
+    <div class="mines-grid" id="mines-grid"></div>
+    <button class="cashout-btn" id="cashout-btn" onclick="cashout()" disabled>💰 Забрать</button>
+  </div>
+</div>
 
-    <div class="modal-overlay" id="deposit-modal" onclick="closeDeposit(event)">
-        <div class="modal" onclick="event.stopPropagation()">
-            <h3>⭐ Пополнение</h3>
-            <p>Оплата через Telegram Stars — скоро. Следи за обновлениями!</p>
-            <button class="close-btn" onclick="closeDeposit()">Понятно</button>
-        </div>
-    </div>
+<div id="screen-blank" class="screen">
+  <div class="screen-head">
+    <button class="back-btn" onclick="go('games')">←</button>
+    <div class="screen-title">Скоро</div>
+  </div>
+  <div class="screen-body">Эта игра скоро появится.</div>
+</div>
 
-    <div class="bottom-nav">
-        <button class="nav-btn" onclick="go('friends')"><span class="ni">👥</span></button>
-        <button class="nav-btn" onclick="go('wallet')"><span class="ni">💳</span></button>
-        <button class="nav-btn center" onclick="openDeposit()">$</button>
-        <button class="nav-btn" onclick="go('history')"><span class="ni">📋</span></button>
-        <button class="nav-btn" onclick="go('favorites')"><span class="ni">⭐</span></button>
-    </div>
+<div class="modal-overlay" id="deposit-modal" onclick="closeDeposit(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3>⭐ Пополнение</h3>
+    <p>Оплата через Telegram Stars — скоро.</p>
+    <button class="close-btn" onclick="closeDeposit()">Понятно</button>
+  </div>
+</div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
+<div class="bottom-nav">
+  <button class="nav-btn" onclick="go('blank')"><span class="ni">👥</span></button>
+  <button class="nav-btn" onclick="go('blank')"><span class="ni">💳</span></button>
+  <button class="nav-btn center" onclick="openDeposit()">$</button>
+  <button class="nav-btn" onclick="go('blank')"><span class="ni">📋</span></button>
+  <button class="nav-btn" onclick="go('blank')"><span class="ni">⭐</span></button>
+</div>
 
-        if (tg.initDataUnsafe?.user) {
-            const u = tg.initDataUnsafe.user;
-            document.getElementById('username').innerText = u.first_name || 'Игрок';
-            document.getElementById('user-avatar').innerText = (u.first_name || 'P')[0].toUpperCase();
-        }
+<script>
+const tg = window.Telegram.WebApp;
+tg.ready(); tg.expand();
 
-        function go(id) {
-            const map = {
-                'dice':'dice','mines':'mines','crash':'crash','roulette':'roulette','bowling':'bowling',
-                'football':'blank','keno':'blank','hilo':'blank','wheel':'blank','rb':'blank',
-                'pvp':'blank','blackjack':'blank','tower':'blank',
-                'friends':'blank','wallet':'blank','history':'blank','favorites':'blank'
-            };
-            const titles = {
-                'football':'⚽ Футбол','keno':'🎱 Кено','hilo':'🎰 Hi-Lo','wheel':'🎡 Wheel',
-                'rb':'🔵 R&B','pvp':'⚔️ PvP','blackjack':'🃏 Блэкджек','tower':'🏰 Башня',
-                'friends':'👥 Друзья','wallet':'💳 Кошелёк','history':'📋 История','favorites':'⭐ Избранное'
-            };
-            const target = map[id] || 'blank';
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const el = document.getElementById('screen-' + target);
-            if (el) {
-                el.classList.add('active');
-                if (target === 'blank' && titles[id]) {
-                    document.getElementById('blank-title').innerText = titles[id];
-                }
-                window.scrollTo(0, 0);
-            }
-        }
+const INIT_DATA = tg.initData || "";
+let balance = 0;
+let betSlots = 100;
+let betMines = 100;
+let currentMinesGame = null;
 
-        function filterGames() {
-            const q = document.getElementById('search').value.toLowerCase().trim();
-            document.querySelectorAll('[data-name]').forEach(el => {
-                const name = el.getAttribute('data-name').toLowerCase();
-                el.style.display = (!q || name.includes(q)) ? '' : 'none';
-            });
-        }
+// ============ API ============
+async function api(path, body={}) {
+  const res = await fetch(path, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({initData: INIT_DATA, ...body})
+  });
+  return await res.json();
+}
 
-        function openDeposit() {
-            document.getElementById('deposit-modal').classList.add('active');
-        }
-        function closeDeposit(e) {
-            if (e && e.target !== e.currentTarget) return;
-            document.getElementById('deposit-modal').classList.remove('active');
-        }
-    </script>
+function setBalance(v) {
+  balance = v;
+  document.getElementById("balance").innerText = v.toLocaleString("ru-RU");
+}
+
+// ============ INIT ============
+(async () => {
+  if (tg.initDataUnsafe?.user) {
+    const u = tg.initDataUnsafe.user;
+    document.getElementById("username").innerText = u.first_name || "Игрок";
+    document.getElementById("user-avatar").innerText = (u.first_name || "P")[0].toUpperCase();
+  }
+  try {
+    const r = await api("/api/user");
+    if (r.ok) setBalance(r.balance);
+  } catch(e) { console.error(e); }
+})();
+
+// ============ NAV ============
+function go(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  const el = document.getElementById("screen-" + id);
+  if (el) { el.classList.add("active"); window.scrollTo(0,0); }
+}
+function filterGames() {
+  const q = document.getElementById("search").value.toLowerCase().trim();
+  document.querySelectorAll("[data-name]").forEach(el => {
+    el.style.display = (!q || el.dataset.name.toLowerCase().includes(q)) ? "" : "none";
+  });
+}
+function openDeposit(){ document.getElementById("deposit-modal").classList.add("active"); }
+function closeDeposit(e){ if(e && e.target!==e.currentTarget) return; document.getElementById("deposit-modal").classList.remove("active"); }
+
+// ============ SLOTS ============
+function setBet(v, el){ betSlots = v; document.querySelectorAll("#screen-slots .bet-btn").forEach(b=>b.classList.remove("active")); el.classList.add("active"); }
+
+async function spin() {
+  const btn = document.getElementById("spin-btn");
+  const msg = document.getElementById("slot-msg");
+  if (balance < betSlots) { msg.innerText = "❌ Недостаточно средств"; return; }
+  btn.disabled = true;
+  msg.innerText = "";
+  const reels = ["r1","r2","r3"].map(id => document.getElementById(id));
+  reels.forEach(r => r.classList.add("spinning"));
+
+  // Анимация
+  const interval = setInterval(() => {
+    reels.forEach(r => r.innerText = Math.floor(Math.random()*7)+1);
+  }, 80);
+
+  try {
+    const r = await api("/api/spin", {bet: betSlots});
+    if (!r.ok) { msg.innerText = "❌ Ошибка"; btn.disabled = false; clearInterval(interval); return; }
+
+    setTimeout(() => {
+      clearInterval(interval);
+      reels.forEach((el, i) => { el.classList.remove("spinning"); el.innerText = r.reels[i]; });
+      setBalance(r.balance);
+      msg.innerHTML = r.win > 0
+        ? `${r.message}<br><span style="color:#2ec46e">+${r.win.toLocaleString()} $</span>`
+        : `${r.message}<br><span style="color:#c42e46">-${r.bet.toLocaleString()} $</span>`;
+      btn.disabled = false;
+    }, 800);
+  } catch(e) {
+    clearInterval(interval);
+    reels.forEach(el => el.classList.remove("spinning"));
+    msg.innerText = "❌ Ошибка сети";
+    btn.disabled = false;
+  }
+}
+
+// ============ MINES ============
+function setBetMines(v, el){ betMines = v; document.querySelectorAll("#mines-setup .bet-btn").forEach(b=>b.classList.remove("active")); el.classList.add("active"); }
+
+async function startMines() {
+  if (balance < betMines) { alert("Недостаточно средств"); return; }
+  const r = await api("/api/mines/start", {bet: betMines});
+  if (!r.ok) { alert("Ошибка"); return; }
+  setBalance(r.balance);
+  currentMinesGame = { size: r.size, opened: new Set(), bet: betMines };
+  document.getElementById("mines-setup").style.display = "none";
+  document.getElementById("mines-play").style.display = "block";
+  document.getElementById("m-bet").innerText = betMines.toLocaleString();
+  document.getElementById("m-mult").innerText = "x1.00";
+  document.getElementById("m-win").innerText = "0";
+  document.getElementById("cashout-btn").disabled = true;
+  renderMinesGrid(r.size);
+}
+
+function renderMinesGrid(size) {
+  const grid = document.getElementById("mines-grid");
+  grid.innerHTML = "";
+  for (let i = 0; i < size*size; i++) {
+    const btn = document.createElement("button");
+    btn.className = "mine-cell";
+    btn.innerText = "❔";
+    btn.onclick = () => openCell(i, btn);
+    grid.appendChild(btn);
+  }
+}
+
+async function openCell(idx, btn) {
+  if (btn.disabled || currentMinesGame.opened.has(idx)) return;
+  btn.disabled = true;
+  const r = await api("/api/mines/open", {index: idx});
+  if (!r.ok) { btn.disabled = false; return; }
+
+  if (r.hit_mine) {
+    btn.classList.add("mine");
+    btn.innerText = "💣";
+    // Раскрыть все мины
+    document.querySelectorAll(".mine-cell").forEach((c, i) => {
+      if (r.field.includes(i)) { c.classList.add("mine"); c.innerText = "💣"; }
+      c.disabled = true;
+    });
+    document.getElementById("cashout-btn").disabled = true;
+    setTimeout(() => { alert("💥 Бум! Ты проиграл"); resetMines(); }, 500);
+    return;
+  }
+
+  currentMinesGame.opened.add(idx);
+  btn.classList.add("opened");
+  btn.innerText = "💎";
+  document.getElementById("m-mult").innerText = "x" + r.multiplier;
+  document.getElementById("m-win").innerText = r.potential_win.toLocaleString();
+  document.getElementById("cashout-btn").disabled = false;
+  document.getElementById("cashout-btn").innerText = `💰 Забрать ${r.potential_win.toLocaleString()} $`;
+}
+
+async function cashout() {
+  const r = await api("/api/mines/cashout");
+  if (r.ok) {
+    setBalance(r.balance);
+    alert(`💰 Ты забрал ${r.win.toLocaleString()} $ (x${r.multiplier})`);
+    resetMines();
+  }
+}
+
+function resetMines() {
+  currentMinesGame = null;
+  document.getElementById("mines-setup").style.display = "block";
+  document.getElementById("mines-play").style.display = "none";
+}
+
+function exitMines() {
+  if (currentMinesGame) { if (!confirm("Выйти? Прогресс потеряется.")) return; }
+  resetMines();
+  go("games");
+}
+</script>
 </body>
 </html>
