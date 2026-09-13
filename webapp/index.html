@@ -16,7 +16,6 @@
             overflow-x: hidden;
         }
 
-        /* Шапка с балансом */
         .header {
             display: flex;
             align-items: center;
@@ -27,75 +26,40 @@
             padding: 10px 20px;
             margin-bottom: 16px;
         }
-        .balance {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffd700;
-        }
+        .balance { font-size: 18px; font-weight: bold; color: #ffd700; }
         .plus-btn {
-            background: #2a9df4;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
+            background: #2a9df4; color: #fff; border: none;
+            border-radius: 50%; width: 28px; height: 28px;
+            font-size: 18px; font-weight: bold; cursor: pointer;
         }
 
-        /* Блок LIVE */
         .live-row {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding: 10px;
-            background: #1a1a2e;
-            border-radius: 16px;
-            margin-bottom: 16px;
+            display: flex; gap: 8px; overflow-x: auto; padding: 10px;
+            background: #1a1a2e; border-radius: 16px; margin-bottom: 16px;
             scrollbar-width: none;
         }
         .live-row::-webkit-scrollbar { display: none; }
         .live-item {
-            min-width: 50px;
-            height: 50px;
-            background: #252540;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
+            min-width: 50px; height: 50px; background: #252540;
+            border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; font-size: 24px;
         }
 
-        /* Кнопки игр */
         .game-btn {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            width: 100%;
-            padding: 16px;
-            border-radius: 20px;
-            margin-bottom: 12px;
-            border: none;
-            color: #fff;
-            text-align: left;
-            cursor: pointer;
-            font-family: inherit;
+            display: flex; align-items: center; gap: 14px;
+            width: 100%; padding: 16px; border-radius: 20px;
+            margin-bottom: 12px; border: none; color: #fff;
+            text-align: left; cursor: pointer; font-family: inherit;
         }
         .game-icon {
-            width: 56px;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            flex-shrink: 0;
+            width: 56px; height: 56px; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 32px; flex-shrink: 0;
         }
         .game-info { flex: 1; }
         .game-title { font-size: 22px; font-weight: bold; margin-bottom: 4px; }
         .game-sub { font-size: 14px; opacity: 0.75; }
 
-        /* Градиенты под каждую игру */
         .g-blue    { background: linear-gradient(135deg, #1e3c72, #2a5298); }
         .g-purple  { background: linear-gradient(135deg, #7b2ff7, #a855f7); }
         .g-red     { background: linear-gradient(135deg, #c31432, #e94560); }
@@ -103,68 +67,52 @@
         .g-orange  { background: linear-gradient(135deg, #f2994a, #f2c94c); }
         .g-dark    { background: linear-gradient(135deg, #232526, #414345); }
 
-        /* Плашка ОНЛАЙН */
         .badge-online {
-            background: rgba(255,255,255,0.2);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            display: inline-block;
-            margin-top: 6px;
+            background: rgba(255,255,255,0.2); padding: 3px 10px;
+            border-radius: 20px; font-size: 12px;
+            display: inline-block; margin-top: 6px;
         }
 
-        /* Нижнее меню */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-around;
-            background: #1a1a2e;
-            padding: 10px 0 15px 0;
+            position: fixed; bottom: 0; left: 0; right: 0;
+            display: flex; justify-content: space-around;
+            background: #1a1a2e; padding: 10px 0 15px 0;
             border-top: 1px solid #252540;
         }
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            font-size: 11px;
-            color: #888;
-            background: none;
-            border: none;
-            cursor: pointer;
-            position: relative;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 4px; font-size: 11px; color: #888; background: none;
+            border: none; cursor: pointer; position: relative;
             font-family: inherit;
         }
         .nav-item.active { color: #2a9df4; }
         .nav-icon { font-size: 22px; }
         .nav-badge {
-            position: absolute;
-            top: -4px;
-            right: -8px;
-            background: #e94560;
-            color: #fff;
-            border-radius: 10px;
-            padding: 1px 6px;
-            font-size: 10px;
-            font-weight: bold;
+            position: absolute; top: -4px; right: -8px;
+            background: #e94560; color: #fff; border-radius: 10px;
+            padding: 1px 6px; font-size: 10px; font-weight: bold;
         }
 
-        /* Экраны */
         .screen { display: none; }
         .screen.active { display: block; }
         .back-btn {
-            background: #252540;
-            color: #fff;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 15px;
-            margin-top: 20px;
-            cursor: pointer;
-            font-family: inherit;
+            background: #252540; color: #fff; border: none;
+            padding: 12px 20px; border-radius: 12px;
+            font-size: 15px; margin-top: 20px;
+            cursor: pointer; font-family: inherit;
+        }
+
+        /* Слоты */
+        .reels {
+            display: flex; justify-content: center; gap: 15px;
+            font-size: 72px; margin: 30px 0;
+            background: #1a1a2e; padding: 30px 20px;
+            border-radius: 20px; border: 2px solid #2a9df4;
+        }
+        .reel {
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
         }
     </style>
 </head>
@@ -269,10 +217,28 @@
         <button class="back-btn" onclick="showScreen('games')">← Назад</button>
     </div>
 
-    <!-- ЭКРАН: Слоты -->
+    <!-- ЭКРАН: Слоты 777 -->
     <div id="screen-slots" class="screen">
         <h2 style="margin:20px 0;">🎰 Слоты 777</h2>
-        <p>Крутите барабаны — скоро.</p>
+
+        <div class="reels">
+            <span class="reel" id="r1">🍒</span>
+            <span class="reel" id="r2">🍋</span>
+            <span class="reel" id="r3">🍇</span>
+        </div>
+
+        <div style="font-size:16px; margin:10px 0; color:#aaa;">
+            Ставка: 100 ⭐
+        </div>
+
+        <button class="game-btn g-red" style="justify-content:center;" onclick="spin()" id="spin-btn">
+            <div class="game-info" style="text-align:center;">
+                <div class="game-title">🎰 Крутить</div>
+            </div>
+        </button>
+
+        <div id="spin-result" style="margin:20px 0; font-size:18px; min-height:30px;"></div>
+
         <button class="back-btn" onclick="showScreen('games')">← Назад</button>
     </div>
 
@@ -314,30 +280,112 @@
         tg.ready();
         tg.expand();
 
-        // Показываем ID пользователя
+        // ===== ЗАГРУЗКА БАЛАНСА С СЕРВЕРА =====
+        async function loadBalance() {
+            try {
+                const res = await fetch('/api/balance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ initData: tg.initData })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    document.getElementById('balance').innerText = data.balance.toLocaleString();
+                    document.getElementById('user-id').innerText = data.user_id;
+                }
+            } catch (e) {
+                console.error('Balance load error:', e);
+                document.getElementById('balance').innerText = "10 000";
+            }
+        }
+
         if (tg.initDataUnsafe?.user) {
-            document.getElementById('user-id').innerText = tg.initDataUnsafe.user.id;
-            // TODO: запрос к серверу за балансом
-            document.getElementById('balance').innerText = "10 000";
+            loadBalance();
         } else {
             document.getElementById('balance').innerText = "10 000";
         }
 
-        // Переключение экранов
+        // ===== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ =====
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('screen-' + id).classList.add('active');
             window.scrollTo(0, 0);
         }
 
-        // Нижнее меню
         function navTo(id, el) {
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             el.classList.add('active');
-            // Заглушки для не-игровых экранов
             if (id === 'games') { showScreen('games'); return; }
             if (id === 'profile') { showScreen('profile'); return; }
             alert('Раздел "' + id + '" — скоро!');
+        }
+
+        // ===== СЛОТЫ 777 =====
+        const SYMBOLS = ['🍒', '🍋', '🍇', '💎', '7️⃣'];
+        const BET = 100;
+
+        async function spin() {
+            const btn = document.getElementById('spin-btn');
+            const result = document.getElementById('spin-result');
+
+            btn.disabled = true;
+            result.innerText = 'Крутим...';
+            result.style.color = '#aaa';
+
+            const r1 = document.getElementById('r1');
+            const r2 = document.getElementById('r2');
+            const r3 = document.getElementById('r3');
+
+            // Визуальная анимация
+            for (let i = 0; i < 10; i++) {
+                r1.innerText = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+                r2.innerText = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+                r3.innerText = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+                await new Promise(r => setTimeout(r, 100));
+            }
+
+            // Запрос к серверу
+            try {
+                const response = await fetch('/api/spin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        initData: tg.initData,
+                        bet: BET
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!data.ok) {
+                    result.innerText = '❌ ' + (data.error || 'Ошибка');
+                    result.style.color = '#e94560';
+                    btn.disabled = false;
+                    return;
+                }
+
+                // Показываем результат с сервера
+                r1.innerText = data.reels[0];
+                r2.innerText = data.reels[1];
+                r3.innerText = data.reels[2];
+
+                document.getElementById('balance').innerText = data.balance.toLocaleString();
+
+                if (data.win > 0) {
+                    result.innerText = `🎉 Выигрыш: +${data.win} ⭐`;
+                    result.style.color = '#38ef7d';
+                } else {
+                    result.innerText = '😢 Не повезло! Попробуй ещё раз.';
+                    result.style.color = '#e94560';
+                }
+
+            } catch (e) {
+                result.innerText = '❌ Ошибка сети';
+                result.style.color = '#e94560';
+                console.error(e);
+            }
+
+            btn.disabled = false;
         }
     </script>
 </body>
