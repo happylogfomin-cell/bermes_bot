@@ -3,441 +3,625 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>BERM</title>
+    <title>BERM Casino</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         body {
-            background: #0d0d12;
-            color: #e9e9ef;
-            font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             min-height: 100vh;
-            padding-bottom: 110px;
+            padding: 0 0 110px 0;
             overflow-x: hidden;
-            letter-spacing: -0.4px;
+            letter-spacing: -0.2px;
         }
 
-        /* ---------- ВЕРХ: баланс ---------- */
-        .top {
+        /* Верхняя панель */
+        .top-bar {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 16px 18px 12px 18px;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: #0a0a0f;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .bal {
+        .balance-pill {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 16px;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
+            background: #1a1a24;
+            padding: 8px 16px 8px 8px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
         }
-        .coin {
-            width: 26px; height: 26px;
-            background: #d4a237;
+        .balance-pill .coin {
+            background: linear-gradient(135deg, #d4a340, #a87a1e);
+            border-radius: 50%;
+            width: 24px; height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #fff;
+            font-weight: 900;
+        }
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #1a1a24;
+            padding: 5px 14px 5px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .user-avatar {
+            width: 28px; height: 28px;
+            background: linear-gradient(135deg, #d4a340, #a87a1e);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 900;
-            color: #1a1a1a;
-            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.25), 0 2px 0 #8a6a1f;
         }
-        .me {
+
+        /* Поиск */
+        .search-row {
+            display: flex;
+            gap: 10px;
+            padding: 0 16px 20px 16px;
+        }
+        .search-input {
+            flex: 1;
+            background: #1a1a24;
+            border: none;
+            border-radius: 14px;
+            padding: 13px 16px 13px 42px;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4-4'/></svg>");
+            background-repeat: no-repeat;
+            background-position: 14px center;
+            outline: none;
+        }
+        .search-input::placeholder { color: #555; }
+        .search-btn {
+            background: #1a1a24;
+            color: #bbb;
+            border: none;
+            border-radius: 14px;
+            padding: 0 22px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* Заголовки секций */
+        .section-title {
+            padding: 8px 16px 14px 16px;
+            font-size: 20px;
+            font-weight: 800;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 14px;
-            font-weight: 700;
         }
-        .ava {
-            width: 30px; height: 30px;
-            background: #d4a237;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 900;
-            color: #1a1a1a;
-            box-shadow: 0 2px 0 #8a6a1f;
-        }
+        .section-title svg { width: 24px; height: 24px; }
 
-        /* ---------- ПОИСК ---------- */
-        .search {
-            display: flex;
-            gap: 8px;
-            padding: 0 18px 20px 18px;
-        }
-        .search input {
-            flex: 1;
-            background: #1a1a22;
-            border: 1px solid #24242e;
-            border-radius: 12px;
-            padding: 12px 14px 12px 40px;
-            color: #e9e9ef;
-            font-size: 14px;
-            font-family: inherit;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2.5'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4-4'/></svg>");
-            background-repeat: no-repeat;
-            background-position: 13px center;
-        }
-        .search input::placeholder { color: #4a4a55; }
-        .search button {
-            background: #1a1a22;
-            color: #888;
-            border: 1px solid #24242e;
-            border-radius: 12px;
-            padding: 0 20px;
-            font-size: 13px;
-            font-weight: 700;
-            font-family: inherit;
-            cursor: pointer;
-        }
-
-        /* ---------- ЗАГОЛОВКИ ---------- */
-        .h {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 4px 18px 14px 18px;
-            font-size: 19px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        .h .ico { font-size: 20px; }
-
-        /* ---------- ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ ---------- */
-        .row {
+        /* Горизонтальный скролл */
+        .games-row {
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding: 0 18px 24px 18px;
+            padding: 0 16px 24px 16px;
             scrollbar-width: none;
         }
-        .row::-webkit-scrollbar { display: none; }
+        .games-row::-webkit-scrollbar { display: none; }
 
-        /* ---------- КАРТОЧКА ИГРЫ ---------- */
-        .card {
+        .game-card {
             min-width: 108px;
-            background: #16161e;
-            border: 1px solid #22222c;
-            border-radius: 18px;
-            padding: 10px 8px 12px 8px;
+            background: #14141d;
+            border-radius: 20px;
+            padding: 8px 10px 14px 10px;
             text-align: center;
             cursor: pointer;
+            border: none;
+            color: #fff;
             font-family: inherit;
-            color: #e9e9ef;
             position: relative;
             flex-shrink: 0;
-            box-shadow: 0 3px 0 #0a0a0e;
-            transition: transform 0.08s, box-shadow 0.08s;
+            transition: transform 0.1s;
         }
-        .card:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #0a0a0e;
-        }
-        /* Микро-повороты, чтобы не выглядело шаблонно */
-        .row .card:nth-child(3n+1) { transform: rotate(-0.7deg); }
-        .row .card:nth-child(3n+2) { transform: rotate(0.4deg); }
-        .row .card:nth-child(3n)   { transform: rotate(0deg); }
+        .game-card:active { transform: scale(0.96); }
 
-        .badge {
+        .game-badge {
             position: absolute;
             top: 8px; left: 8px;
-            background: #23232e;
-            font-size: 9.5px;
+            background: #22222e;
+            color: #fff;
+            font-size: 9px;
             font-weight: 800;
-            padding: 3px 7px;
-            border-radius: 7px;
+            padding: 3px 8px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             gap: 3px;
-            letter-spacing: 0.2px;
-            text-transform: uppercase;
-            color: #c9c9d4;
+            letter-spacing: 0.3px;
         }
-        .badge .fire { color: #ff5c33; }
+        .game-badge.top { color: #ffb347; }
+        .game-badge.fast { color: #ff6b6b; }
+        .game-badge.luck { color: #b26bff; }
 
-        .emo {
+        .game-icon {
+            width: 56px;
+            height: 56px;
+            margin: 26px auto 8px auto;
             display: block;
-            font-size: 42px;
-            line-height: 1;
-            margin: 24px 0 10px 0;
-            filter: drop-shadow(0 3px 4px rgba(0,0,0,0.6));
         }
-        .name {
-            font-size: 13.5px;
+        .game-name {
+            font-size: 14px;
             font-weight: 800;
+            margin-top: 4px;
         }
-        .type {
-            font-size: 10.5px;
-            color: #6a6a78;
-            margin-top: 3px;
-            font-weight: 600;
+        .game-type {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
         }
 
-        /* ---------- МИНИ-СПИСОК (2 колонки) ---------- */
-        .mini {
+        /* Мини-список (2 колонки) */
+        .mini-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 9px;
-            padding: 0 18px 22px 18px;
+            gap: 10px;
+            padding: 0 16px 24px 16px;
         }
-        .mini button {
+        .mini-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            background: #16161e;
-            border: 1px solid #22222c;
-            border-radius: 14px;
-            padding: 13px 14px;
-            color: #e9e9ef;
+            background: #14141d;
+            border: none;
+            border-radius: 16px;
+            padding: 14px 14px;
+            color: #fff;
             font-family: inherit;
-            font-size: 14.5px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             text-align: left;
-            box-shadow: 0 2px 0 #0a0a0e;
+            transition: transform 0.1s;
         }
-        .mini button:active { transform: translateY(2px); box-shadow: none; }
-        .mini .e { font-size: 22px; }
-        .mini .ar { margin-left: auto; color: #4a4a55; font-size: 18px; font-weight: 900; }
+        .mini-item:active { transform: scale(0.97); }
+        .mini-item svg { width: 24px; height: 24px; flex-shrink: 0; }
+        .mini-item .arrow {
+            margin-left: auto;
+            color: #555;
+            font-size: 16px;
+        }
 
-        /* ---------- ШИРОКАЯ КАРТОЧКА ---------- */
-        .wide {
+        /* Широкие карточки */
+        .wide-card {
             display: flex;
             align-items: center;
             gap: 14px;
-            background: #16161e;
-            border: 1px solid #22222c;
-            border-radius: 16px;
-            padding: 14px 16px;
-            margin: 0 18px 10px 18px;
+            background: #14141d;
+            border-radius: 18px;
+            padding: 16px;
+            margin: 0 16px 10px 16px;
             cursor: pointer;
-            color: #e9e9ef;
+            color: #fff;
             font-family: inherit;
-            border-width: 1px;
+            border: none;
+            width: calc(100% - 32px);
             text-align: left;
-            width: calc(100% - 36px);
-            box-shadow: 0 2px 0 #0a0a0e;
+            transition: transform 0.1s;
         }
-        .wide:active { transform: translateY(2px); box-shadow: none; }
-        .wide .e { font-size: 28px; }
-        .wide .txt { flex: 1; }
-        .wide .t { font-size: 14.5px; font-weight: 800; margin-bottom: 3px; }
-        .wide .s { font-size: 11.5px; color: #6a6a78; line-height: 1.35; }
-        .wide .ar { color: #4a4a55; font-size: 18px; font-weight: 900; }
+        .wide-card:active { transform: scale(0.98); }
+        .wide-card .ico { width: 32px; height: 32px; flex-shrink: 0; }
+        .wide-card .info { flex: 1; }
+        .wide-card .title { font-size: 15px; font-weight: 800; margin-bottom: 3px; }
+        .wide-card .sub { font-size: 12px; color: #777; line-height: 1.3; }
+        .wide-card .arrow { color: #555; font-size: 18px; }
 
-        /* ---------- НИЖНЕЕ МЕНЮ ---------- */
-        .nav {
+        /* Нижнее меню */
+        .bottom-nav {
             position: fixed;
-            bottom: 14px;
-            left: 14px;
-            right: 14px;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            background: #16161e;
-            border: 1px solid #22222c;
-            border-radius: 26px;
-            padding: 10px 6px;
-            box-shadow: 0 6px 0 #06060a, 0 10px 24px rgba(0,0,0,0.5);
+            background: #1a1a24;
+            border-radius: 32px;
+            padding: 12px 8px;
+            border: 1px solid #25252f;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
-        .nav button {
+        .nav-btn {
             background: none;
             border: none;
-            color: #5a5a68;
+            color: #666;
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.15s;
+        }
+        .nav-btn svg { width: 24px; height: 24px; }
+        .nav-btn.active { color: #fff; }
+        .nav-btn.center {
+            background: linear-gradient(135deg, #d4a340, #a87a1e);
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            margin-top: -24px;
+            box-shadow: 0 8px 20px rgba(212, 163, 64, 0.5);
+            color: #fff;
+        }
+        .nav-btn.center svg { width: 28px; height: 28px; }
+
+        /* Экраны */
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .screen-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+        }
+        .back-btn {
+            background: #1a1a24;
+            border: none;
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            color: #fff;
             font-size: 20px;
-            padding: 8px 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .nav button.on { color: #e9e9ef; }
-        .nav .mid {
-            background: #d4a237;
-            width: 52px; height: 52px;
-            border-radius: 50%;
-            color: #1a1a1a;
-            font-size: 24px;
-            font-weight: 900;
-            margin-top: -24px;
-            box-shadow: 0 4px 0 #8a6a1f, 0 8px 20px rgba(212, 162, 55, 0.35);
-            display: flex;
+        .screen-title {
+            font-size: 22px;
+            font-weight: 800;
+        }
+        .screen-body {
+            padding: 20px 16px;
+            color: #999;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        /* Модалка депозита */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            display: none;
             align-items: center;
             justify-content: center;
+            z-index: 1000;
+            padding: 20px;
         }
-        .nav .mid:active { transform: translateY(3px); box-shadow: 0 1px 0 #8a6a1f; }
-
-        /* ---------- ЭКРАНЫ ---------- */
-        .scr { display: none; }
-        .scr.on { display: block; }
-        .back {
-            margin: 16px 18px;
-            background: #16161e;
-            color: #e9e9ef;
-            border: 1px solid #22222c;
-            padding: 11px 20px;
-            border-radius: 12px;
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: #1a1a24;
+            border-radius: 24px;
+            padding: 24px;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+        }
+        .modal h3 {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .modal p {
+            color: #888;
             font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .modal .close-btn {
+            background: #2a2a35;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-size: 15px;
             font-weight: 700;
+            width: 100%;
             cursor: pointer;
             font-family: inherit;
-        }
-        .ptitle {
-            padding: 4px 18px 8px 18px;
-            font-size: 24px;
-            font-weight: 900;
-        }
-        .psub {
-            padding: 0 18px 20px 18px;
-            color: #6a6a78;
-            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Верх -->
-    <div class="top">
-        <div class="bal">
+    <!-- Верхняя панель -->
+    <div class="top-bar">
+        <div class="balance-pill">
             <span class="coin">$</span>
-            <span id="bal">0</span>
+            <span id="balance">0</span>
         </div>
-        <div class="me">
-            <span id="name">—</span>
-            <span class="ava" id="av">P</span>
+        <div class="user-pill">
+            <span id="username">Игрок</span>
+            <div class="user-avatar" id="user-avatar">P</div>
         </div>
     </div>
 
     <!-- ГЛАВНЫЙ ЭКРАН -->
-    <div id="s-games" class="scr on">
+    <div id="screen-games" class="screen active">
 
-        <div class="search">
-            <input placeholder="Найти игру" />
-            <button>Поиск</button>
+        <!-- Поиск -->
+        <div class="search-row">
+            <input class="search-input" id="search" placeholder="Найти игру" oninput="filterGames()" />
+            <button class="search-btn" onclick="filterGames()">Поиск</button>
         </div>
 
-        <div class="h"><span class="ico">🔥</span> Популярные за 24 часа</div>
-        <div class="row">
-            <button class="card" onclick="go('dice')">
-                <div class="badge"><span class="fire">🔥</span> Top</div>
-                <span class="emo">🎲</span>
-                <div class="name">Кости</div>
-                <div class="type">Игра</div>
-            </button>
-            <button class="card" onclick="go('bowl')">
-                <div class="badge"><span class="fire">🔥</span> Top</div>
-                <span class="emo">🎳</span>
-                <div class="name">Боулинг</div>
-                <div class="type">Игра</div>
-            </button>
-            <button class="card" onclick="go('mines')">
-                <div class="badge"><span class="fire">🔥</span> Top</div>
-                <span class="emo">💣</span>
-                <div class="name">Мины</div>
-                <div class="type">Игра</div>
-            </button>
-            <button class="card" onclick="go('foot')">
-                <div class="badge"><span class="fire">🔥</span> Top</div>
-                <span class="emo">⚽</span>
-                <div class="name">Футбол</div>
-                <div class="type">Игра</div>
-            </button>
+        <!-- Популярные -->
+        <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="#ff6b35"><path d="M12 2c1 5 4 6 4 10a4 4 0 0 1-8 0c0-1 .5-2 1-3-2 1-3 3-3 5a6 6 0 0 0 12 0c0-6-6-9-6-12z"/></svg>
+            Популярные за 24 часа
         </div>
-
-        <div class="mini">
-            <button onclick="go('keno')"><span class="e">🎱</span> Кено <span class="ar">›</span></button>
-            <button onclick="go('hilo')"><span class="e">🎰</span> Hi-Lo <span class="ar">›</span></button>
-            <button onclick="go('wheel')"><span class="e">🎡</span> Wheel <span class="ar">›</span></button>
-            <button onclick="go('rb')"><span class="e">🔵</span> R&B <span class="ar">›</span></button>
-        </div>
-
-        <div class="h"><span class="ico">🌟</span> Эксклюзивные игры</div>
-        <div class="row">
-            <button class="card" onclick="go('crash')">
-                <div class="badge">Fast</div>
-                <span class="emo">🚀</span>
-                <div class="name">Краш</div>
-                <div class="type">Игра</div>
+        <div class="games-row" id="popular-row">
+            <button class="game-card" data-name="Кости" onclick="go('dice')">
+                <div class="game-badge top">🔥 TOP</div>
+                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
+                    <rect x="8" y="8" width="48" height="48" rx="12" fill="#fff"/>
+                    <circle cx="22" cy="22" r="4" fill="#000"/>
+                    <circle cx="42" cy="22" r="4" fill="#000"/>
+                    <circle cx="32" cy="32" r="4" fill="#d92e4b"/>
+                    <circle cx="22" cy="42" r="4" fill="#000"/>
+                    <circle cx="42" cy="42" r="4" fill="#000"/>
+                </svg>
+                <div class="game-name">Кости</div>
+                <div class="game-type">Игра</div>
             </button>
-            <button class="card" onclick="go('roul')">
-                <div class="badge">Fast</div>
-                <span class="emo">🎡</span>
-                <div class="name">Рулетка</div>
-                <div class="type">Игра</div>
+            <button class="game-card" data-name="Боулинг" onclick="go('bowling')">
+                <div class="game-badge top">🔥 TOP</div>
+                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
+                    <ellipse cx="16" cy="40" rx="6" ry="14" fill="#fff"/>
+                    <ellipse cx="28" cy="40" rx="6" ry="14" fill="#fff"/>
+                    <ellipse cx="40" cy="40" rx="6" ry="14" fill="#fff"/>
+                    <circle cx="16" cy="28" r="3" fill="#e74c3c"/>
+                    <circle cx="28" cy="28" r="3" fill="#e74c3c"/>
+                    <circle cx="40" cy="28" r="3" fill="#e74c3c"/>
+                </svg>
+                <div class="game-name">Боулинг</div>
+                <div class="game-type">Игра</div>
             </button>
-            <button class="card" onclick="go('mines')">
-                <div class="badge">Luck</div>
-                <span class="emo">💣</span>
-                <div class="name">Мины</div>
-                <div class="type">Игра</div>
+            <button class="game-card" data-name="Мины" onclick="go('mines')">
+                <div class="game-badge top">🔥 TOP</div>
+                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
+                    <circle cx="32" cy="38" r="18" fill="#333"/>
+                    <circle cx="26" cy="34" r="3" fill="#555"/>
+                    <path d="M32 20 L32 14 L38 12" stroke="#f39c12" stroke-width="3" stroke-linecap="round" fill="none"/>
+                    <circle cx="40" cy="11" r="3" fill="#f39c12"/>
+                </svg>
+                <div class="game-name">Мины</div>
+                <div class="game-type">Игра</div>
             </button>
-            <button class="card" onclick="go('tower')">
-                <div class="badge">Luck</div>
-                <span class="emo">🏰</span>
-                <div class="name">Башня</div>
-                <div class="type">Игра</div>
+            <button class="game-card" data-name="Футбол" onclick="go('football')">
+                <div class="game-badge top">🔥 TOP</div>
+                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
+                    <circle cx="32" cy="32" r="22" fill="#fff" stroke="#000" stroke-width="2"/>
+                    <polygon points="32,20 38,26 36,34 28,34 26,26" fill="#000"/>
+                </svg>
+                <div class="game-name">Футбол</div>
+                <div class="game-type">Игра</div>
             </button>
         </div>
 
-        <button class="wide" onclick="go('pvp')">
-            <span class="e">⚔️</span>
-            <div class="txt">
-                <div class="t">PvP — Дуэль на Emoji играх</div>
-                <div class="s">Кости, Боулинг, Дартс, Баскетбол, Футбол, Слоты</div>
+        <!-- Мини-игры -->
+        <div class="mini-list">
+            <button class="mini-item" data-name="Кено" onclick="go('keno')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"/>
+                    <text x="12" y="16" text-anchor="middle" font-size="10" fill="#888" stroke="none" font-weight="bold">8</text>
+                </svg>
+                Кено <span class="arrow">›</span>
+            </button>
+            <button class="mini-item" data-name="Hi-Lo" onclick="go('hilo')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2">
+                    <rect x="4" y="6" width="16" height="12" rx="2"/>
+                    <text x="12" y="15" text-anchor="middle" font-size="7" fill="#e74c3c" stroke="none" font-weight="bold">777</text>
+                </svg>
+                Hi-Lo <span class="arrow">›</span>
+            </button>
+            <button class="mini-item" data-name="Wheel" onclick="go('wheel')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#b26bff" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 3v18M3 12h18M6 6l12 12M18 6L6 18"/>
+                </svg>
+                Wheel <span class="arrow">›</span>
+            </button>
+            <button class="mini-item" data-name="R&B" onclick="go('rb')">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="9" fill="#2a9df4"/>
+                </svg>
+                R&B <span class="arrow">›</span>
+            </button>
+        </div>
+
+        <!-- Эксклюзивные -->
+        <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="#ffcb3d"><path d="M12 2l2.6 6.9L22 9.3l-5.7 5.1L18 22l-6-3.8L6 22l1.7-7.6L2 9.3l7.4-.4L12 2z"/></svg>
+            Эксклюзивные игры
+        </div>
+        <div class="games-row">
+            <button class="game-card" data-name="Краш" onclick="go('crash')">
+                <div class="game-badge fast">FAST</div>
+                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
+                    <path d="M32 6 L22 34 L30 34 L28 58 L44 26 L34 26 Z" fill="#e74c3c"/>
+                    <path d="M32 6 L22 34 L30 34 L28 58" stroke="#fff" stroke-width="1" opacity="0.3"/>
+                </svg>
+                <div class="game-name">Краш</div>
+                <div class="game-type">Игра</div>
+            </button>
+            <button class="game-card" data-name="Рулетка" onclick="go('roulette')">
+                <div class="game-badge fast">FAST</div>
+                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
+                    <circle cx="32" cy="32" r="22" stroke="#d4a340" stroke-width="4"/>
+                    <circle cx="32" cy="32" r="14" stroke="#a87a1e" stroke-width="2"/>
+                    <circle cx="32" cy="32" r="5" fill="#d4a340"/>
+                </svg>
+                <div class="game-name">Рулетка</div>
+                <div class="game-type">Игра</div>
+            </button>
+            <button class="game-card" data-name="Мины" onclick="go('mines')">
+                <div class="game-badge luck">LUCK</div>
+                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
+                    <circle cx="32" cy="38" r="18" fill="#333"/>
+                    <circle cx="26" cy="34" r="3" fill="#555"/>
+                    <path d="M32 20 L32 14 L38 12" stroke="#f39c12" stroke-width="3" stroke-linecap="round" fill="none"/>
+                </svg>
+                <div class="game-name">Мины</div>
+                <div class="game-type">Игра</div>
+            </button>
+            <button class="game-card" data-name="Башня" onclick="go('tower')">
+                <div class="game-badge luck">LUCK</div>
+                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
+                    <rect x="20" y="40" width="24" height="18" fill="#888"/>
+                    <rect x="24" y="28" width="16" height="12" fill="#aaa"/>
+                    <polygon points="32,14 22,28 42,28" fill="#d92e4b"/>
+                </svg>
+                <div class="game-name">Башня</div>
+                <div class="game-type">Игра</div>
+            </button>
+        </div>
+
+        <!-- PvP -->
+        <button class="wide-card" onclick="go('pvp')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#ffcb3d" stroke-width="2">
+                <path d="M4 20L10 14M14 10l6-6M4 4l6 6M14 14l6 6"/>
+                <circle cx="6" cy="6" r="2" fill="#ffcb3d"/>
+                <circle cx="18" cy="18" r="2" fill="#ffcb3d"/>
+            </svg>
+            <div class="info">
+                <div class="title">PvP — Дуэль на Emoji играх</div>
+                <div class="sub">Кости, Боулинг, Дартс, Баскетбол, Футбол, Слоты</div>
             </div>
-            <span class="ar">›</span>
+            <span class="arrow">›</span>
         </button>
 
-        <button class="wide" onclick="go('black')">
-            <span class="e">🃏</span>
-            <div class="txt">
-                <div class="t">Блэкджек</div>
-                <div class="s">Классика против дилера — набери 21 и не перебери</div>
+        <!-- Блэкджек -->
+        <button class="wide-card" onclick="go('blackjack')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none">
+                <rect x="6" y="3" width="12" height="18" rx="2" fill="#fff"/>
+                <text x="12" y="15" text-anchor="middle" font-size="9" fill="#d92e4b" font-weight="bold">A♠</text>
+            </svg>
+            <div class="info">
+                <div class="title">Блэкджек</div>
+                <div class="sub">Классика против дилера — набери 21 и не перебери</div>
             </div>
-            <span class="ar">›</span>
+            <span class="arrow">›</span>
         </button>
 
-        <div class="mini">
-            <button onclick="go('dice')"><span class="e">🎲</span> Кости <span class="ar">›</span></button>
-            <button onclick="go('bowl')"><span class="e">🎳</span> Боулинг <span class="ar">›</span></button>
+        <!-- Emoji-игры внизу -->
+        <div class="mini-list">
+            <button class="mini-item" data-name="Кости" onclick="go('dice')">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="4" y="4" width="16" height="16" rx="3" fill="#fff"/>
+                    <circle cx="9" cy="9" r="1.2" fill="#000"/>
+                    <circle cx="15" cy="15" r="1.2" fill="#000"/>
+                </svg>
+                Кости <span class="arrow">›</span>
+            </button>
+            <button class="mini-item" data-name="Боулинг" onclick="go('bowling')">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <ellipse cx="9" cy="14" rx="3" ry="6" fill="#fff"/>
+                    <circle cx="9" cy="9" r="1.5" fill="#e74c3c"/>
+                </svg>
+                Боулинг <span class="arrow">›</span>
+            </button>
         </div>
     </div>
 
-    <!-- ЭКРАНЫ-ЗАГЛУШКИ -->
-    <div id="s-crash" class="scr">
-        <button class="back" onclick="go('games')">← Назад</button>
-        <div class="ptitle">🚀 Краш</div>
-        <div class="psub">Здесь будет график множителя.</div>
+    <!-- ЭКРАНЫ ИГР -->
+    <div id="screen-dice" class="screen">
+        <div class="screen-head">
+            <button class="back-btn" onclick="go('games')">←</button>
+            <div class="screen-title">🎲 Кости</div>
+        </div>
+        <div class="screen-body">Логика игры — следующий шаг.</div>
     </div>
-    <div id="s-mines" class="scr">
-        <button class="back" onclick="go('games')">← Назад</button>
-        <div class="ptitle">💣 Мины</div>
-        <div class="psub">Поле 5×5 скоро.</div>
+
+    <div id="screen-mines" class="screen">
+        <div class="screen-head">
+            <button class="back-btn" onclick="go('games')">←</button>
+            <div class="screen-title">💣 Мины</div>
+        </div>
+        <div class="screen-body">Поле 5×5 — следующий шаг.</div>
     </div>
-    <div id="s-roul" class="scr">
-        <button class="back" onclick="go('games')">← Назад</button>
-        <div class="ptitle">🎡 Рулетка</div>
-        <div class="psub">Колесо скоро.</div>
+
+    <div id="screen-crash" class="screen">
+        <div class="screen-head">
+            <button class="back-btn" onclick="go('games')">←</button>
+            <div class="screen-title">🚀 Краш</div>
+        </div>
+        <div class="screen-body">График множителя — следующий шаг.</div>
     </div>
-    <div id="s-tower" class="scr">
-        <button class="back" onclick="go('games')">← Назад</button>
-        <div class="ptitle">🏰 Башня</div>
-        <div class="psub">Скоро.</div>
+
+    <div id="screen-roulette" class="screen">
+        <div class="screen-head">
+            <button class="back-btn" onclick="go('games')">←</button>
+            <div class="screen-title">🎡 Рулетка</div>
+        </div>
+        <div class="screen-body">Колесо — следующий шаг.</div>
+    </div>
+
+    <div id="screen-bowling" class="screen">
+        <div class="screen-head">
+            <button class="back-btn" onclick="go('games')">←</button>
+            <div class="screen-title">🎳 Боулинг</div>
+        </div>
+        <div class="screen-body">Скоро.</div>
+    </div>
+
+    <!-- Универсальная заглушка -->
+    <div id="screen-blank" class="screen">
+        <div class="screen-head">
+            <button class="back-btn" onclick="go('games')">←</button>
+            <div class="screen-title" id="blank-title">Игра</div>
+        </div>
+        <div class="screen-body">Эта игра скоро появится.</div>
+    </div>
+
+    <!-- МОДАЛКА ДЕПОЗИТА -->
+    <div class="modal-overlay" id="deposit-modal" onclick="closeDeposit(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <h3>⭐ Пополнение</h3>
+            <p>Оплата через Telegram Stars — скоро. Следи за обновлениями!</p>
+            <button class="close-btn" onclick="closeDeposit()">Понятно</button>
+        </div>
     </div>
 
     <!-- НИЖНЕЕ МЕНЮ -->
-    <div class="nav">
-        <button onclick="soon('Друзья')">👥</button>
-        <button onclick="soon('Карта')">💳</button>
-        <button class="mid" onclick="soon('Депозит')">$</button>
-        <button onclick="soon('История')">📋</button>
-        <button onclick="soon('Избранное')">⭐</button>
+    <div class="bottom-nav">
+        <button class="nav-btn" onclick="go('friends')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 19c0-3 3-5 7-5s7 2 7 5v1H2v-1z"/><path d="M15 19c0-2 2-3.5 5-3.5v.5c0 1-.5 2-1 3h-4z"/></svg>
+        </button>
+        <button class="nav-btn" onclick="go('wallet')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="6" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="2" y="10" width="20" height="3" fill="currentColor"/></svg>
+        </button>
+        <button class="nav-btn center" onclick="openDeposit()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+        </button>
+        <button class="nav-btn" onclick="go('history')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        </button>
+        <button class="nav-btn" onclick="go('favorites')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.6 6.9L22 9.3l-5.7 5.1L18 22l-6-3.8L6 22l1.7-7.6L2 9.3l7.4-.4L12 2z"/></svg>
+        </button>
     </div>
 
     <script>
@@ -445,21 +629,64 @@
         tg.ready();
         tg.expand();
 
+        // Пользователь
         if (tg.initDataUnsafe?.user) {
             const u = tg.initDataUnsafe.user;
-            document.getElementById('name').innerText = u.first_name || 'Игрок';
-            document.getElementById('av').innerText = (u.first_name || 'P')[0].toUpperCase();
+            document.getElementById('username').innerText = u.first_name || 'Игрок';
+            document.getElementById('user-avatar').innerText = (u.first_name || 'P')[0].toUpperCase();
         }
-        document.getElementById('bal').innerText = '3 045 810,31';
 
+        // Баланс (заглушка, потом с сервера)
+        document.getElementById('balance').innerText = "10 000";
+
+        // Переключение экранов
         function go(id) {
-            document.querySelectorAll('.scr').forEach(s => s.classList.remove('on'));
-            const el = document.getElementById('s-' + id);
-            if (el) { el.classList.add('on'); window.scrollTo(0,0); }
-            else { alert('Игра "' + id + '" — скоро'); }
+            const map = {
+                'dice': 'dice', 'mines': 'mines', 'crash': 'crash',
+                'roulette': 'roulette', 'bowling': 'bowling',
+                'football': 'blank', 'keno': 'blank', 'hilo': 'blank',
+                'wheel': 'blank', 'rb': 'blank', 'pvp': 'blank',
+                'blackjack': 'blank', 'tower': 'blank',
+                'friends': 'blank', 'wallet': 'blank',
+                'history': 'blank', 'favorites': 'blank'
+            };
+            const target = map[id] || 'blank';
+            const titles = {
+                'football': '⚽ Футбол', 'keno': '🎱 Кено', 'hilo': '🎰 Hi-Lo',
+                'wheel': '🎡 Wheel', 'rb': '🔵 R&B', 'pvp': '⚔️ PvP',
+                'blackjack': '🃏 Блэкджек', 'tower': '🏰 Башня',
+                'friends': '👥 Друзья', 'wallet': '💳 Кошелёк',
+                'history': '📋 История', 'favorites': '⭐ Избранное'
+            };
+
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const el = document.getElementById('screen-' + target);
+            if (el) {
+                el.classList.add('active');
+                if (target === 'blank' && titles[id]) {
+                    document.getElementById('blank-title').innerText = titles[id];
+                }
+                window.scrollTo(0, 0);
+            }
         }
 
-        function soon(what) { alert(what + ' — скоро'); }
+        // Поиск
+        function filterGames() {
+            const q = document.getElementById('search').value.toLowerCase().trim();
+            document.querySelectorAll('[data-name]').forEach(el => {
+                const name = el.getAttribute('data-name').toLowerCase();
+                el.style.display = (!q || name.includes(q)) ? '' : 'none';
+            });
+        }
+
+        // Депозит
+        function openDeposit() {
+            document.getElementById('deposit-modal').classList.add('active');
+        }
+        function closeDeposit(e) {
+            if (e && e.target !== e.currentTarget) return;
+            document.getElementById('deposit-modal').classList.remove('active');
+        }
     </script>
 </body>
 </html>
