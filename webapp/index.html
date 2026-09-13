@@ -23,38 +23,38 @@
             align-items: center;
             justify-content: space-between;
             padding: 14px 16px;
-            background: #0a0a0f;
             position: sticky;
             top: 0;
             z-index: 100;
+            background: #0a0a0f;
         }
         .balance-pill {
             display: flex;
             align-items: center;
             gap: 8px;
             background: #1a1a24;
-            padding: 8px 16px 8px 8px;
+            padding: 6px 16px 6px 6px;
             border-radius: 30px;
-            font-size: 14px;
-            font-weight: 700;
+            font-size: 15px;
+            font-weight: 800;
         }
         .balance-pill .coin {
             background: linear-gradient(135deg, #d4a340, #a87a1e);
             border-radius: 50%;
-            width: 24px; height: 24px;
+            width: 26px; height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
-            color: #fff;
+            font-size: 14px;
             font-weight: 900;
+            color: #fff;
         }
         .user-pill {
             display: flex;
             align-items: center;
             gap: 8px;
             background: #1a1a24;
-            padding: 5px 14px 5px 16px;
+            padding: 4px 12px 4px 14px;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 700;
@@ -81,14 +81,14 @@
             background: #1a1a24;
             border: none;
             border-radius: 14px;
-            padding: 13px 16px 13px 42px;
+            padding: 13px 16px 13px 44px;
             color: #fff;
             font-size: 14px;
             font-family: inherit;
+            outline: none;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4-4'/></svg>");
             background-repeat: no-repeat;
             background-position: 14px center;
-            outline: none;
         }
         .search-input::placeholder { color: #555; }
         .search-btn {
@@ -96,23 +96,23 @@
             color: #bbb;
             border: none;
             border-radius: 14px;
-            padding: 0 22px;
+            padding: 0 20px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             font-family: inherit;
         }
 
-        /* Заголовки секций */
+        /* Заголовок секции */
         .section-title {
             padding: 8px 16px 14px 16px;
-            font-size: 20px;
+            font-size: 21px;
             font-weight: 800;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
-        .section-title svg { width: 24px; height: 24px; }
+        .section-title .ico { font-size: 22px; }
 
         /* Горизонтальный скролл */
         .games-row {
@@ -128,7 +128,7 @@
             min-width: 108px;
             background: #14141d;
             border-radius: 20px;
-            padding: 8px 10px 14px 10px;
+            padding: 10px 8px 14px 8px;
             text-align: center;
             cursor: pointer;
             border: none;
@@ -142,40 +142,35 @@
 
         .game-badge {
             position: absolute;
-            top: 8px; left: 8px;
-            background: #22222e;
+            top: 10px; left: 10px;
+            background: rgba(255,255,255,0.08);
             color: #fff;
             font-size: 9px;
             font-weight: 800;
-            padding: 3px 8px;
+            padding: 4px 8px;
             border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 3px;
             letter-spacing: 0.3px;
         }
-        .game-badge.top { color: #ffb347; }
-        .game-badge.fast { color: #ff6b6b; }
-        .game-badge.luck { color: #b26bff; }
 
-        .game-icon {
-            width: 56px;
-            height: 56px;
-            margin: 26px auto 8px auto;
+        .game-emoji {
+            font-size: 52px;
+            line-height: 1;
+            margin: 22px 0 10px 0;
             display: block;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
         }
         .game-name {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 800;
             margin-top: 4px;
         }
         .game-type {
             font-size: 11px;
             color: #666;
-            margin-top: 2px;
+            margin-top: 3px;
         }
 
-        /* Мини-список (2 колонки) */
+        /* Мини-игры (2 колонки) */
         .mini-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -189,21 +184,25 @@
             background: #14141d;
             border: none;
             border-radius: 16px;
-            padding: 14px 14px;
+            padding: 14px;
             color: #fff;
             font-family: inherit;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
             text-align: left;
             transition: transform 0.1s;
         }
         .mini-item:active { transform: scale(0.97); }
-        .mini-item svg { width: 24px; height: 24px; flex-shrink: 0; }
+        .mini-item .ico {
+            font-size: 24px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
         .mini-item .arrow {
             margin-left: auto;
             color: #555;
-            font-size: 16px;
+            font-size: 18px;
         }
 
         /* Широкие карточки */
@@ -224,10 +223,14 @@
             transition: transform 0.1s;
         }
         .wide-card:active { transform: scale(0.98); }
-        .wide-card .ico { width: 32px; height: 32px; flex-shrink: 0; }
+        .wide-card .ico {
+            font-size: 32px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4));
+        }
         .wide-card .info { flex: 1; }
         .wide-card .title { font-size: 15px; font-weight: 800; margin-bottom: 3px; }
-        .wide-card .sub { font-size: 12px; color: #777; line-height: 1.3; }
+        .wide-card .sub { font-size: 12px; color: #777; line-height: 1.35; }
         .wide-card .arrow { color: #555; font-size: 18px; }
 
         /* Нижнее меню */
@@ -254,19 +257,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: color 0.15s;
         }
-        .nav-btn svg { width: 24px; height: 24px; }
-        .nav-btn.active { color: #fff; }
+        .nav-btn .ni { font-size: 24px; }
         .nav-btn.center {
             background: linear-gradient(135deg, #d4a340, #a87a1e);
-            width: 56px; height: 56px;
+            width: 58px; height: 58px;
             border-radius: 50%;
             margin-top: -24px;
             box-shadow: 0 8px 20px rgba(212, 163, 64, 0.5);
             color: #fff;
+            font-size: 26px;
+            font-weight: 900;
         }
-        .nav-btn.center svg { width: 28px; height: 28px; }
 
         /* Экраны */
         .screen { display: none; }
@@ -300,7 +302,7 @@
             line-height: 1.5;
         }
 
-        /* Модалка депозита */
+        /* Модалка */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -320,16 +322,8 @@
             max-width: 340px;
             text-align: center;
         }
-        .modal h3 {
-            font-size: 20px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-        .modal p {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
+        .modal h3 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+        .modal p { color: #888; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
         .modal .close-btn {
             background: #2a2a35;
             color: #fff;
@@ -346,11 +340,10 @@
 </head>
 <body>
 
-    <!-- Верхняя панель -->
     <div class="top-bar">
         <div class="balance-pill">
             <span class="coin">$</span>
-            <span id="balance">0</span>
+            <span id="balance">10 000</span>
         </div>
         <div class="user-pill">
             <span id="username">Игрок</span>
@@ -358,195 +351,112 @@
         </div>
     </div>
 
-    <!-- ГЛАВНЫЙ ЭКРАН -->
     <div id="screen-games" class="screen active">
-
-        <!-- Поиск -->
         <div class="search-row">
             <input class="search-input" id="search" placeholder="Найти игру" oninput="filterGames()" />
             <button class="search-btn" onclick="filterGames()">Поиск</button>
         </div>
 
-        <!-- Популярные -->
-        <div class="section-title">
-            <svg viewBox="0 0 24 24" fill="#ff6b35"><path d="M12 2c1 5 4 6 4 10a4 4 0 0 1-8 0c0-1 .5-2 1-3-2 1-3 3-3 5a6 6 0 0 0 12 0c0-6-6-9-6-12z"/></svg>
-            Популярные за 24 часа
-        </div>
-        <div class="games-row" id="popular-row">
+        <div class="section-title"><span class="ico">🔥</span> Популярные игры за 24 часа</div>
+        <div class="games-row">
             <button class="game-card" data-name="Кости" onclick="go('dice')">
-                <div class="game-badge top">🔥 TOP</div>
-                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
-                    <rect x="8" y="8" width="48" height="48" rx="12" fill="#fff"/>
-                    <circle cx="22" cy="22" r="4" fill="#000"/>
-                    <circle cx="42" cy="22" r="4" fill="#000"/>
-                    <circle cx="32" cy="32" r="4" fill="#d92e4b"/>
-                    <circle cx="22" cy="42" r="4" fill="#000"/>
-                    <circle cx="42" cy="42" r="4" fill="#000"/>
-                </svg>
+                <div class="game-badge">🔥 Популярное</div>
+                <span class="game-emoji">🎲</span>
                 <div class="game-name">Кости</div>
                 <div class="game-type">Игра</div>
             </button>
             <button class="game-card" data-name="Боулинг" onclick="go('bowling')">
-                <div class="game-badge top">🔥 TOP</div>
-                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
-                    <ellipse cx="16" cy="40" rx="6" ry="14" fill="#fff"/>
-                    <ellipse cx="28" cy="40" rx="6" ry="14" fill="#fff"/>
-                    <ellipse cx="40" cy="40" rx="6" ry="14" fill="#fff"/>
-                    <circle cx="16" cy="28" r="3" fill="#e74c3c"/>
-                    <circle cx="28" cy="28" r="3" fill="#e74c3c"/>
-                    <circle cx="40" cy="28" r="3" fill="#e74c3c"/>
-                </svg>
+                <div class="game-badge">🔥 Популярное</div>
+                <span class="game-emoji">🎳</span>
                 <div class="game-name">Боулинг</div>
                 <div class="game-type">Игра</div>
             </button>
             <button class="game-card" data-name="Мины" onclick="go('mines')">
-                <div class="game-badge top">🔥 TOP</div>
-                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
-                    <circle cx="32" cy="38" r="18" fill="#333"/>
-                    <circle cx="26" cy="34" r="3" fill="#555"/>
-                    <path d="M32 20 L32 14 L38 12" stroke="#f39c12" stroke-width="3" stroke-linecap="round" fill="none"/>
-                    <circle cx="40" cy="11" r="3" fill="#f39c12"/>
-                </svg>
+                <div class="game-badge">🔥 Популярное</div>
+                <span class="game-emoji">💣</span>
                 <div class="game-name">Мины</div>
                 <div class="game-type">Игра</div>
             </button>
             <button class="game-card" data-name="Футбол" onclick="go('football')">
-                <div class="game-badge top">🔥 TOP</div>
-                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
-                    <circle cx="32" cy="32" r="22" fill="#fff" stroke="#000" stroke-width="2"/>
-                    <polygon points="32,20 38,26 36,34 28,34 26,26" fill="#000"/>
-                </svg>
+                <div class="game-badge">🔥 Популярное</div>
+                <span class="game-emoji">⚽</span>
                 <div class="game-name">Футбол</div>
                 <div class="game-type">Игра</div>
             </button>
         </div>
 
-        <!-- Мини-игры -->
         <div class="mini-list">
             <button class="mini-item" data-name="Кено" onclick="go('keno')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2">
-                    <circle cx="12" cy="12" r="9"/>
-                    <text x="12" y="16" text-anchor="middle" font-size="10" fill="#888" stroke="none" font-weight="bold">8</text>
-                </svg>
-                Кено <span class="arrow">›</span>
+                <span class="ico">🎱</span> Кено <span class="arrow">›</span>
             </button>
             <button class="mini-item" data-name="Hi-Lo" onclick="go('hilo')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2">
-                    <rect x="4" y="6" width="16" height="12" rx="2"/>
-                    <text x="12" y="15" text-anchor="middle" font-size="7" fill="#e74c3c" stroke="none" font-weight="bold">777</text>
-                </svg>
-                Hi-Lo <span class="arrow">›</span>
+                <span class="ico">🎰</span> Hi-Lo <span class="arrow">›</span>
             </button>
             <button class="mini-item" data-name="Wheel" onclick="go('wheel')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#b26bff" stroke-width="1.8">
-                    <circle cx="12" cy="12" r="9"/>
-                    <path d="M12 3v18M3 12h18M6 6l12 12M18 6L6 18"/>
-                </svg>
-                Wheel <span class="arrow">›</span>
+                <span class="ico">🎡</span> Wheel <span class="arrow">›</span>
             </button>
             <button class="mini-item" data-name="R&B" onclick="go('rb')">
-                <svg viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="9" fill="#2a9df4"/>
-                </svg>
-                R&B <span class="arrow">›</span>
+                <span class="ico">🔵</span> R&B <span class="arrow">›</span>
             </button>
         </div>
 
-        <!-- Эксклюзивные -->
-        <div class="section-title">
-            <svg viewBox="0 0 24 24" fill="#ffcb3d"><path d="M12 2l2.6 6.9L22 9.3l-5.7 5.1L18 22l-6-3.8L6 22l1.7-7.6L2 9.3l7.4-.4L12 2z"/></svg>
-            Эксклюзивные игры
-        </div>
+        <div class="section-title"><span class="ico">🌟</span> Эксклюзивные игры</div>
         <div class="games-row">
             <button class="game-card" data-name="Краш" onclick="go('crash')">
-                <div class="game-badge fast">FAST</div>
-                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
-                    <path d="M32 6 L22 34 L30 34 L28 58 L44 26 L34 26 Z" fill="#e74c3c"/>
-                    <path d="M32 6 L22 34 L30 34 L28 58" stroke="#fff" stroke-width="1" opacity="0.3"/>
-                </svg>
+                <div class="game-badge">Fast</div>
+                <span class="game-emoji">🚀</span>
                 <div class="game-name">Краш</div>
                 <div class="game-type">Игра</div>
             </button>
             <button class="game-card" data-name="Рулетка" onclick="go('roulette')">
-                <div class="game-badge fast">FAST</div>
-                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
-                    <circle cx="32" cy="32" r="22" stroke="#d4a340" stroke-width="4"/>
-                    <circle cx="32" cy="32" r="14" stroke="#a87a1e" stroke-width="2"/>
-                    <circle cx="32" cy="32" r="5" fill="#d4a340"/>
-                </svg>
+                <div class="game-badge">Fast</div>
+                <span class="game-emoji">🎡</span>
                 <div class="game-name">Рулетка</div>
                 <div class="game-type">Игра</div>
             </button>
             <button class="game-card" data-name="Мины" onclick="go('mines')">
-                <div class="game-badge luck">LUCK</div>
-                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
-                    <circle cx="32" cy="38" r="18" fill="#333"/>
-                    <circle cx="26" cy="34" r="3" fill="#555"/>
-                    <path d="M32 20 L32 14 L38 12" stroke="#f39c12" stroke-width="3" stroke-linecap="round" fill="none"/>
-                </svg>
+                <div class="game-badge">Luck</div>
+                <span class="game-emoji">💣</span>
                 <div class="game-name">Мины</div>
                 <div class="game-type">Игра</div>
             </button>
             <button class="game-card" data-name="Башня" onclick="go('tower')">
-                <div class="game-badge luck">LUCK</div>
-                <svg class="game-icon" viewBox="0 0 64 64" fill="none">
-                    <rect x="20" y="40" width="24" height="18" fill="#888"/>
-                    <rect x="24" y="28" width="16" height="12" fill="#aaa"/>
-                    <polygon points="32,14 22,28 42,28" fill="#d92e4b"/>
-                </svg>
+                <div class="game-badge">Luck</div>
+                <span class="game-emoji">🏰</span>
                 <div class="game-name">Башня</div>
                 <div class="game-type">Игра</div>
             </button>
         </div>
 
-        <!-- PvP -->
         <button class="wide-card" onclick="go('pvp')">
-            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#ffcb3d" stroke-width="2">
-                <path d="M4 20L10 14M14 10l6-6M4 4l6 6M14 14l6 6"/>
-                <circle cx="6" cy="6" r="2" fill="#ffcb3d"/>
-                <circle cx="18" cy="18" r="2" fill="#ffcb3d"/>
-            </svg>
+            <span class="ico">⚔️</span>
             <div class="info">
-                <div class="title">PvP — Дуэль на Emoji играх</div>
-                <div class="sub">Кости, Боулинг, Дартс, Баскетбол, Футбол, Слоты</div>
+                <div class="title">PvP - Дуэль на Emoji играх</div>
+                <div class="sub">Игры: Кости, Боулинг, Дартс, Баскетбол, Футбол и Слоты</div>
             </div>
             <span class="arrow">›</span>
         </button>
 
-        <!-- Блэкджек -->
         <button class="wide-card" onclick="go('blackjack')">
-            <svg class="ico" viewBox="0 0 24 24" fill="none">
-                <rect x="6" y="3" width="12" height="18" rx="2" fill="#fff"/>
-                <text x="12" y="15" text-anchor="middle" font-size="9" fill="#d92e4b" font-weight="bold">A♠</text>
-            </svg>
+            <span class="ico">🃏</span>
             <div class="info">
                 <div class="title">Блэкджек</div>
-                <div class="sub">Классика против дилера — набери 21 и не перебери</div>
+                <div class="sub">Классическая карточная игра против дилера — набери 21 и не перебери</div>
             </div>
             <span class="arrow">›</span>
         </button>
 
-        <!-- Emoji-игры внизу -->
         <div class="mini-list">
             <button class="mini-item" data-name="Кости" onclick="go('dice')">
-                <svg viewBox="0 0 24 24" fill="none">
-                    <rect x="4" y="4" width="16" height="16" rx="3" fill="#fff"/>
-                    <circle cx="9" cy="9" r="1.2" fill="#000"/>
-                    <circle cx="15" cy="15" r="1.2" fill="#000"/>
-                </svg>
-                Кости <span class="arrow">›</span>
+                <span class="ico">🎲</span> Кости <span class="arrow">›</span>
             </button>
             <button class="mini-item" data-name="Боулинг" onclick="go('bowling')">
-                <svg viewBox="0 0 24 24" fill="none">
-                    <ellipse cx="9" cy="14" rx="3" ry="6" fill="#fff"/>
-                    <circle cx="9" cy="9" r="1.5" fill="#e74c3c"/>
-                </svg>
-                Боулинг <span class="arrow">›</span>
+                <span class="ico">🎳</span> Боулинг <span class="arrow">›</span>
             </button>
         </div>
     </div>
 
-    <!-- ЭКРАНЫ ИГР -->
+    <!-- Экраны игр -->
     <div id="screen-dice" class="screen">
         <div class="screen-head">
             <button class="back-btn" onclick="go('games')">←</button>
@@ -554,7 +464,6 @@
         </div>
         <div class="screen-body">Логика игры — следующий шаг.</div>
     </div>
-
     <div id="screen-mines" class="screen">
         <div class="screen-head">
             <button class="back-btn" onclick="go('games')">←</button>
@@ -562,7 +471,6 @@
         </div>
         <div class="screen-body">Поле 5×5 — следующий шаг.</div>
     </div>
-
     <div id="screen-crash" class="screen">
         <div class="screen-head">
             <button class="back-btn" onclick="go('games')">←</button>
@@ -570,7 +478,6 @@
         </div>
         <div class="screen-body">График множителя — следующий шаг.</div>
     </div>
-
     <div id="screen-roulette" class="screen">
         <div class="screen-head">
             <button class="back-btn" onclick="go('games')">←</button>
@@ -578,7 +485,6 @@
         </div>
         <div class="screen-body">Колесо — следующий шаг.</div>
     </div>
-
     <div id="screen-bowling" class="screen">
         <div class="screen-head">
             <button class="back-btn" onclick="go('games')">←</button>
@@ -586,8 +492,6 @@
         </div>
         <div class="screen-body">Скоро.</div>
     </div>
-
-    <!-- Универсальная заглушка -->
     <div id="screen-blank" class="screen">
         <div class="screen-head">
             <button class="back-btn" onclick="go('games')">←</button>
@@ -596,7 +500,7 @@
         <div class="screen-body">Эта игра скоро появится.</div>
     </div>
 
-    <!-- МОДАЛКА ДЕПОЗИТА -->
+    <!-- Модалка депозита -->
     <div class="modal-overlay" id="deposit-modal" onclick="closeDeposit(event)">
         <div class="modal" onclick="event.stopPropagation()">
             <h3>⭐ Пополнение</h3>
@@ -605,23 +509,13 @@
         </div>
     </div>
 
-    <!-- НИЖНЕЕ МЕНЮ -->
+    <!-- Нижнее меню -->
     <div class="bottom-nav">
-        <button class="nav-btn" onclick="go('friends')">
-            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 19c0-3 3-5 7-5s7 2 7 5v1H2v-1z"/><path d="M15 19c0-2 2-3.5 5-3.5v.5c0 1-.5 2-1 3h-4z"/></svg>
-        </button>
-        <button class="nav-btn" onclick="go('wallet')">
-            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="6" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="2" y="10" width="20" height="3" fill="currentColor"/></svg>
-        </button>
-        <button class="nav-btn center" onclick="openDeposit()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
-        </button>
-        <button class="nav-btn" onclick="go('history')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-        </button>
-        <button class="nav-btn" onclick="go('favorites')">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.6 6.9L22 9.3l-5.7 5.1L18 22l-6-3.8L6 22l1.7-7.6L2 9.3l7.4-.4L12 2z"/></svg>
-        </button>
+        <button class="nav-btn" onclick="go('friends')"><span class="ni">👥</span></button>
+        <button class="nav-btn" onclick="go('wallet')"><span class="ni">💳</span></button>
+        <button class="nav-btn center" onclick="openDeposit()">$</button>
+        <button class="nav-btn" onclick="go('history')"><span class="ni">📋</span></button>
+        <button class="nav-btn" onclick="go('favorites')"><span class="ni">⭐</span></button>
     </div>
 
     <script>
@@ -629,36 +523,25 @@
         tg.ready();
         tg.expand();
 
-        // Пользователь
         if (tg.initDataUnsafe?.user) {
             const u = tg.initDataUnsafe.user;
             document.getElementById('username').innerText = u.first_name || 'Игрок';
             document.getElementById('user-avatar').innerText = (u.first_name || 'P')[0].toUpperCase();
         }
 
-        // Баланс (заглушка, потом с сервера)
-        document.getElementById('balance').innerText = "10 000";
-
-        // Переключение экранов
         function go(id) {
             const map = {
-                'dice': 'dice', 'mines': 'mines', 'crash': 'crash',
-                'roulette': 'roulette', 'bowling': 'bowling',
-                'football': 'blank', 'keno': 'blank', 'hilo': 'blank',
-                'wheel': 'blank', 'rb': 'blank', 'pvp': 'blank',
-                'blackjack': 'blank', 'tower': 'blank',
-                'friends': 'blank', 'wallet': 'blank',
-                'history': 'blank', 'favorites': 'blank'
+                'dice':'dice','mines':'mines','crash':'crash','roulette':'roulette','bowling':'bowling',
+                'football':'blank','keno':'blank','hilo':'blank','wheel':'blank','rb':'blank',
+                'pvp':'blank','blackjack':'blank','tower':'blank',
+                'friends':'blank','wallet':'blank','history':'blank','favorites':'blank'
+            };
+            const titles = {
+                'football':'⚽ Футбол','keno':'🎱 Кено','hilo':'🎰 Hi-Lo','wheel':'🎡 Wheel',
+                'rb':'🔵 R&B','pvp':'⚔️ PvP','blackjack':'🃏 Блэкджек','tower':'🏰 Башня',
+                'friends':'👥 Друзья','wallet':'💳 Кошелёк','history':'📋 История','favorites':'⭐ Избранное'
             };
             const target = map[id] || 'blank';
-            const titles = {
-                'football': '⚽ Футбол', 'keno': '🎱 Кено', 'hilo': '🎰 Hi-Lo',
-                'wheel': '🎡 Wheel', 'rb': '🔵 R&B', 'pvp': '⚔️ PvP',
-                'blackjack': '🃏 Блэкджек', 'tower': '🏰 Башня',
-                'friends': '👥 Друзья', 'wallet': '💳 Кошелёк',
-                'history': '📋 История', 'favorites': '⭐ Избранное'
-            };
-
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const el = document.getElementById('screen-' + target);
             if (el) {
@@ -670,7 +553,6 @@
             }
         }
 
-        // Поиск
         function filterGames() {
             const q = document.getElementById('search').value.toLowerCase().trim();
             document.querySelectorAll('[data-name]').forEach(el => {
@@ -679,7 +561,6 @@
             });
         }
 
-        // Депозит
         function openDeposit() {
             document.getElementById('deposit-modal').classList.add('active');
         }
