@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BERM Casino</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            font-family: -apple-system, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+        .balance {
+            font-size: 28px;
+            margin: 20px 0;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .balance span { color: #fff; }
+        .menu-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #e94560, #c23152);
+            color: white;
+            border: none;
+            padding: 20px;
+            font-size: 20px;
+            border-radius: 16px;
+            margin: 12px 0;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+        }
+        .menu-btn:active { transform: scale(0.98); }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        h2 { margin: 20px 0; color: #ffd700; }
+        .back-btn {
+            background: #2c3e50;
+            padding: 12px 24px;
+            margin-top: 20px;
+            border-radius: 10px;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="balance">💰 Баланс: <span id="balance">10 000</span> $</div>
+
+    <div id="menu" class="screen active">
+        <button class="menu-btn" onclick="showScreen('roulette')">🎡 Рулетка</button>
+        <button class="menu-btn" onclick="showScreen('mines')">💣 Мины</button>
+        <button class="menu-btn" onclick="showScreen('slots')">🎰 Слоты 777</button>
+    </div>
+
+    <div id="roulette" class="screen">
+        <h2>🎡 Рулетка</h2>
+        <p>Здесь будет колесо фортуны...</p>
+        <button class="back-btn" onclick="showScreen('menu')">← Назад</button>
+    </div>
+
+    <div id="mines" class="screen">
+        <h2>💣 Мины</h2>
+        <p>Поле 5×5...</p>
+        <button class="back-btn" onclick="showScreen('menu')">← Назад</button>
+    </div>
+
+    <div id="slots" class="screen">
+        <h2>🎰 Слоты 777</h2>
+        <p>Крутите барабаны...</p>
+        <button class="back-btn" onclick="showScreen('menu')">← Назад</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+    </script>
+</body>
+</html>
