@@ -1,11 +1,10 @@
-
 import os
 import asyncio
 import threading
-from flask import Flask
+from flask import Flask, send_from_directory
 from main import bot, dp
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='webapp')
 
 
 @app.route('/')
@@ -16,6 +15,16 @@ def index():
 @app.route('/health')
 def health():
     return "OK"
+
+
+@app.route('/webapp')
+def webapp():
+    return send_from_directory('webapp', 'index.html')
+
+
+@app.route('/webapp/<path:path>')
+def webapp_static(path):
+    return send_from_directory('webapp', path)
 
 
 def run_flask():
