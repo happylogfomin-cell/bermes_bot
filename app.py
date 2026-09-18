@@ -7,6 +7,7 @@ from datetime import datetime
 from flask import Flask, send_from_directory, request, jsonify
 from sqlalchemy import select
 from aiogram.utils.web_app import safe_parse_webapp_init_data
+from aiogram.types import LabeledPrice
 from aiocryptopay import AioCryptoPay, Networks
 
 from main import bot, dp, TOKEN
@@ -78,6 +79,110 @@ def api_user():
     return jsonify({'ok': True, 'balance': user.balance, 'username': user.username or 'Игрок'})
 
 
+# ============ STARS PAYMENT (ИСПРАВЛЕНО) ============
+
+@app.route('/api/stars/invoice', methods=['POST'])
+def api_stars_invoice():
+    data = request.get_json() or {}
+    init = data.get('initData', '')
+    stars = int(data.get('stars', 100))
+
+    tg_id, _ = get_user_from_init(init)
+    if not tg_id:
+        return jsonify({'ok': False, 'error': 'unauthorized'}), 401
+    if stars < 1 or stars > 10000:
+        return jsonify({'ok': False, 'error': 'bad_amount'}), 400
+
+    async def _create():
+        return await bot.create_invoice_link(
+            title="Пополнение баланса BERM",
+            description=f"{stars} ⭐ на баланс BERM Casino",
+            payload=f"stars_{tg_id}_{stars}",
+            currency="XTR",
+            provider_token="",
+            prices=[LabeledPrice(label=f"{stars} Stars", amount=stars)]
+        )
+
+    loop = asyncio.new_event_loop()
+    try:
+        link = loop.run_until_complete(_create())
+        return jsonify({'ok': True, 'link': link})
+    except Exception as e:
+        return jsonify({'ok': False, 'error': str(e)}), 500
+    finally:
+        loop.close()
+
+
+# ============ CRYPTO PAY ============
+
+@app.route('/api/crypto/invoice', methods=['POST'])
+def api_crypto_invoice():
+    data = request.get_json() or {}
+    init = data.get('initData', '')
+    amount = float(data.get('amount', 1))
+
+    tg_id, _ = get_user_from_init(init)
+    if not tg_id:
+        return jsonify({'ok': False, 'error': 'unauthorized'}), 401
+    if not CRYPTO_TOKEN:
+        return jsonify({'ok': False, 'error': 'crypto_not_configured'}), 500
+
+    async def _create():
+        crypto = AioCryptoPay(token=CRYPTO_TOKEN, network=Networks.MAIN_NET)
+        try:
+            invoice = await crypto.create_invoice(
+                asset='USDT',
+                amount=amount,
+                description="Пополнение BERM Casino",
+                payload="crypto_" + str(tg_id),
+                expires_in=600
+            )
+            return invoice.bot_invoice_url
+        finally:
+            await crypto.close()
+
+    loop = asyncio.new_event_loop()
+    try:
+        url = loop.run_until_complete(_create())
+        return jsonify({'ok': True, 'link': url})
+    except Exception as e:
+        return jsonify({'ok': False, 'error': str(e)}), 500
+    finally:
+        loop.close()
+
+
+@app.route('/crypto/webhook/<secret>', methods=['POST'])
+def crypto_webhook(secret):
+    if secret != CRYPTO_WEBHOOK_SECRET:
+        return "Forbidden", 403
+    data = request.json or {}
+    if data.get('update_type') == 'invoice_paid':
+        payload = data.get('payload', {})
+        tg_id_raw = payload.get('payload', '')
+        amount_usdt = float(payload.get('amount', 0))
+        try:
+            tg_id = int(tg_id_raw.split('_')[1])
+        except Exception:
+            tg_id = 0
+        if tg_id and amount_usdt > 0:
+            coins = int(amount_usdt * 1000)
+
+            async def _add():
+                async with SessionLocal() as session:
+                    result = await session.execute(select(User).where(User.tg_id == tg_id))
+                    user = result.scalar_one_or_none()
+                    if user:
+                        user.balance += coins
+                        await session.commit()
+
+            loop = asyncio.new_event_loop()
+            loop.run_until_complete(_add())
+            loop.close()
+    return "OK", 200
+
+
+# ============ SLOTS ============
+
 @app.route('/api/spin', methods=['POST'])
 def api_spin():
     data = request.get_json() or {}
@@ -120,11 +225,10 @@ def api_spin():
 
     new_balance = loop.run_until_complete(_update())
     loop.close()
-    return jsonify({
-        'ok': True, 'reels': reels, 'win': win, 'bet': bet,
-        'balance': new_balance, 'message': msg
-    })
+    return jsonify({'ok': True, 'reels': reels, 'win': win, 'bet': bet, 'balance': new_balance, 'message': msg})
 
+
+# ============ MINES ============
 
 def _calculate_mines_multiplier(opened: int, mines: int = MINES_COUNT) -> float:
     if opened <= 0:
@@ -187,12 +291,7 @@ def api_mines_open():
         return jsonify({'ok': True, 'hit_mine': True, 'field': list(game['field']), 'win': 0})
     game['opened'].add(idx)
     mult = _calculate_mines_multiplier(len(game['opened']))
-    return jsonify({
-        'ok': True, 'hit_mine': False,
-        'opened': list(game['opened']),
-        'multiplier': mult,
-        'potential_win': int(game['bet'] * mult)
-    })
+    return jsonify({'ok': True, 'hit_mine': False, 'opened': list(game['opened']), 'multiplier': mult, 'potential_win': int(game['bet'] * mult)})
 
 
 @app.route('/api/mines/cashout', methods=['POST'])
@@ -223,6 +322,8 @@ def api_mines_cashout():
     return jsonify({'ok': True, 'win': win, 'balance': new_balance, 'multiplier': mult})
 
 
+# ============ CRASH ============
+
 @app.route('/api/crash/start', methods=['POST'])
 def api_crash_start():
     data = request.get_json() or {}
@@ -238,11 +339,7 @@ def api_crash_start():
     if user.balance < bet:
         loop.close()
         return jsonify({'ok': False, 'error': 'no_money'})
-    ACTIVE_CRASH[tg_id] = {
-        'bet': bet,
-        'crash_point': generate_crash_point(),
-        'start_time': time.time(),
-    }
+    ACTIVE_CRASH[tg_id] = {'bet': bet, 'crash_point': generate_crash_point(), 'start_time': time.time()}
 
     async def _deduct():
         async with SessionLocal() as session:
@@ -269,16 +366,8 @@ def api_crash_status():
     current_mult = round(1.0 + elapsed * 0.5, 2)
     if current_mult >= game['crash_point']:
         del ACTIVE_CRASH[tg_id]
-        return jsonify({
-            'ok': True, 'crashed': True,
-            'crash_point': game['crash_point'],
-            'multiplier': game['crash_point'], 'win': 0
-        })
-    return jsonify({
-        'ok': True, 'crashed': False,
-        'multiplier': current_mult,
-        'potential_win': int(game['bet'] * current_mult)
-    })
+        return jsonify({'ok': True, 'crashed': True, 'crash_point': game['crash_point'], 'multiplier': game['crash_point'], 'win': 0})
+    return jsonify({'ok': True, 'crashed': False, 'multiplier': current_mult, 'potential_win': int(game['bet'] * current_mult)})
 
 
 @app.route('/api/crash/cashout', methods=['POST'])
@@ -309,70 +398,7 @@ def api_crash_cashout():
     return jsonify({'ok': True, 'win': win, 'multiplier': current_mult, 'balance': new_balance})
 
 
-@app.route('/api/crypto/invoice', methods=['POST'])
-def api_crypto_invoice():
-    data = request.get_json() or {}
-    init = data.get('initData', '')
-    amount = float(data.get('amount', 1))
-    tg_id, _ = get_user_from_init(init)
-    if not tg_id:
-        return jsonify({'ok': False, 'error': 'unauthorized'}), 401
-    if not CRYPTO_TOKEN:
-        return jsonify({'ok': False, 'error': 'crypto_not_configured'}), 500
-
-    async def _create():
-        crypto = AioCryptoPay(token=CRYPTO_TOKEN, network=Networks.MAIN_NET)
-        try:
-            invoice = await crypto.create_invoice(
-                asset='USDT',
-                amount=amount,
-                description="Пополнение BERM Casino",
-                payload="crypto_" + str(tg_id),
-                expires_in=600
-            )
-            return invoice.bot_invoice_url
-        finally:
-            await crypto.close()
-
-    loop = asyncio.new_event_loop()
-    try:
-        url = loop.run_until_complete(_create())
-        return jsonify({'ok': True, 'link': url})
-    except Exception as e:
-        return jsonify({'ok': False, 'error': str(e)}), 500
-    finally:
-        loop.close()
-
-
-@app.route('/crypto/webhook/<secret>', methods=['POST'])
-def crypto_webhook(secret):
-    if secret != CRYPTO_WEBHOOK_SECRET:
-        return "Forbidden", 403
-    data = request.json or {}
-    if data.get('update_type') == 'invoice_paid':
-        payload = data.get('payload', {})
-        tg_id_raw = payload.get('payload', '')
-        amount_usdt = float(payload.get('amount', 0))
-        try:
-            tg_id = int(tg_id_raw.split('_')[1])
-        except Exception:
-            tg_id = 0
-        if tg_id and amount_usdt > 0:
-            coins = int(amount_usdt * 1000)
-
-            async def _add():
-                async with SessionLocal() as session:
-                    result = await session.execute(select(User).where(User.tg_id == tg_id))
-                    user = result.scalar_one_or_none()
-                    if user:
-                        user.balance += coins
-                        await session.commit()
-
-            loop = asyncio.new_event_loop()
-            loop.run_until_complete(_add())
-            loop.close()
-    return "OK", 200
-
+# ============ ЗАПУСК ============
 
 def run_flask():
     port = int(os.environ.get("PORT", 5000))
