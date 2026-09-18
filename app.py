@@ -3,20 +3,26 @@ import asyncio
 import secrets
 import threading
 import time
+from datetime import datetime
 from flask import Flask, send_from_directory, request, jsonify
 from sqlalchemy import select
 from aiogram.utils.web_app import safe_parse_webapp_init_data
-from aiogram.types import LabeledPrice
+from aiocryptopay import AioCryptoPay, Networks
 
 from main import bot, dp, TOKEN
 from db.session import SessionLocal, init_db
 from db.models import User
+from services.crash import generate_crash_point
 
 app = Flask(__name__, static_folder='webapp')
 
+CRYPTO_TOKEN = os.getenv("CRYPTO_PAY_TOKEN", "")
+CRYPTO_WEBHOOK_SECRET = os.getenv("CRYPTO_WEBHOOK_SECRET", "berm_secret_change_me")
 
-# ============ ГЛАВНАЯ ============
-
+ACTIVE_MINES = {}
+ACTIVE_CRASH = {}
+GRID_SIZE = 5
+MINES_COUNT = 3
 @app.route('/')
 def index():
     return "Bot is running"
@@ -36,8 +42,6 @@ def webapp():
 def webapp_static(path):
     return send_from_directory('webapp', path)
 
-
-# ============ HELPERS ============
 
 def get_user_from_init(init_data: str):
     try:
@@ -71,9 +75,7 @@ def api_user():
     user = loop.run_until_complete(_get_or_create_user(tg_id, username))
     loop.close()
     return jsonify({'ok': True, 'balance': user.balance, 'username': user.username or 'Игрок'})
-# ============ СЛОТЫ ============
-
-@app.route('/api/spin', methods=['POST'])
+    @app.route('/api/spin', methods=['POST'])
 def api_spin():
     data = request.get_json() or {}
     init = data.get('initData', '')
@@ -122,23 +124,10 @@ def api_spin():
     loop.close()
 
     return jsonify({
-        'ok': True,
-        'reels': reels,
-        'win': win,
-        'bet': bet,
-        'balance': new_balance,
-        'message': msg
+        'ok': True, 'reels': reels, 'win': win, 'bet': bet,
+        'balance': new_balance, 'message': msg
     })
-
-
-# ============ МИНЫ ============
-
-ACTIVE_MINES = {}
-GRID_SIZE = 5
-MINES_COUNT = 3
-
-
-def _calculate_mines_multiplier(opened: int, mines: int = MINES_COUNT) -> float:
+    def _calculate_mines_multiplier(opened: int, mines: int = MINES_COUNT) -> float:
     if opened <= 0:
         return 1.0
     total = GRID_SIZE * GRID_SIZE
@@ -204,13 +193,12 @@ def api_mines_open():
 
     if idx in game['field']:
         del ACTIVE_MINES[tg_id]
-        return jsonify({'ok': True, 'hit_mine': True, 'field': list(game['field'])})
+        return jsonify({'ok': True, 'hit_mine': True, 'field': list(game['field']), 'win': 0})
 
     game['opened'].add(idx)
     mult = _calculate_mines_multiplier(len(game['opened']))
     return jsonify({
-        'ok': True,
-        'hit_mine': False,
+        'ok': True, 'hit_mine': False,
         'opened': list(game['opened']),
         'multiplier': mult,
         'potential_win': int(game['bet'] * mult)
@@ -221,7 +209,6 @@ def api_mines_open():
 def api_mines_cashout():
     data = request.get_json() or {}
     init = data.get('initData', '')
-
     tg_id, _ = get_user_from_init(init)
     if not tg_id or tg_id not in ACTIVE_MINES:
         return jsonify({'ok': False, 'error': 'no_game'})
@@ -233,7 +220,6 @@ def api_mines_cashout():
 
     mult = _calculate_mines_multiplier(opened)
     win = int(game['bet'] * mult)
-
     loop = asyncio.new_event_loop()
 
     async def _add_win():
@@ -247,22 +233,9 @@ def api_mines_cashout():
     new_balance = loop.run_until_complete(_add_win())
     loop.close()
     return jsonify({'ok': True, 'win': win, 'balance': new_balance, 'multiplier': mult})
-    # ============ CRASH (РАКЕТКА) ============
-
-def generate_crash_point() -> float:
-    r = secrets.randbelow(1000) / 1000.0
-    if r < 0.5:
-        return round(1.0 + r * 2, 2)
-    elif r < 0.8:
-        return round(2.0 + (r - 0.5) * 10, 2)
-    elif r < 0.95:
-        return round(5.0 + (r - 0.8) * 33, 2)
-    else:
-        return round(10.0 + (r - 0.95) * 1800, 2)
 
 
-ACTIVE_CRASH = {}
-
+# ============ CRASH (РАКЕТКА) ============
 
 @app.route('/api/crash/start', methods=['POST'])
 def api_crash_start():
@@ -278,7 +251,6 @@ def api_crash_start():
 
     loop = asyncio.new_event_loop()
     user = loop.run_until_complete(_get_or_create_user(tg_id, None))
-
     if user.balance < bet:
         loop.close()
         return jsonify({'ok': False, 'error': 'no_money'})
@@ -286,7 +258,7 @@ def api_crash_start():
     ACTIVE_CRASH[tg_id] = {
         'bet': bet,
         'crash_point': generate_crash_point(),
-        'start_time': time.time()
+        'start_time': time.time(),
     }
 
     async def _deduct():
@@ -306,7 +278,6 @@ def api_crash_start():
 def api_crash_status():
     data = request.get_json() or {}
     init = data.get('initData', '')
-
     tg_id, _ = get_user_from_init(init)
     if not tg_id or tg_id not in ACTIVE_CRASH:
         return jsonify({'ok': False, 'error': 'no_game'})
@@ -334,7 +305,6 @@ def api_crash_status():
 def api_crash_cashout():
     data = request.get_json() or {}
     init = data.get('initData', '')
-
     tg_id, _ = get_user_from_init(init)
     if not tg_id or tg_id not in ACTIVE_CRASH:
         return jsonify({'ok': False, 'error': 'no_game'})
@@ -360,45 +330,7 @@ def api_crash_cashout():
     new_balance = loop.run_until_complete(_add_win())
     loop.close()
     return jsonify({'ok': True, 'win': win, 'multiplier': current_mult, 'balance': new_balance})
-
-
-# ============ STARS PAYMENT ============
-
-@app.route('/api/stars/invoice', methods=['POST'])
-def api_stars_invoice():
-    data = request.get_json() or {}
-    init = data.get('initData', '')
-    stars = int(data.get('stars', 100))
-
-    tg_id, _ = get_user_from_init(init)
-    if not tg_id:
-        return jsonify({'ok': False, 'error': 'unauthorized'}), 401
-
-    async def _create():
-        return await bot.create_invoice_link(
-            title="Пополнение баланса BERM",
-            description=f"{stars} ⭐ на баланс",
-            payload=f"stars_{tg_id}_{stars}",
-            currency="XTR",
-            prices=[LabeledPrice(label=f"{stars} Stars", amount=stars)]
-        )
-
-    loop = asyncio.new_event_loop()
-    try:
-        link = loop.run_until_complete(_create())
-        return jsonify({'ok': True, 'link': link})
-    except Exception as e:
-        return jsonify({'ok': False, 'error': str(e)}), 500
-    finally:
-        loop.close()
-
-
-# ============ CRYPTO PAY ============
-
-from aiocryptopay import AioCryptoPay, Networks
-
-CRYPTO_TOKEN = os.getenv("CRYPTO_PAY_TOKEN", "")
-
+    # ============ CRYPTO PAY ============
 
 @app.route('/api/crypto/invoice', methods=['POST'])
 def api_crypto_invoice():
@@ -417,7 +349,8 @@ def api_crypto_invoice():
         crypto = AioCryptoPay(token=CRYPTO_TOKEN, network=Networks.MAIN_NET)
         try:
             invoice = await crypto.create_invoice(
-                asset='USDT', amount=amount,
+                asset='USDT',
+                amount=amount,
                 description="Пополнение BERM Casino",
                 payload=f"crypto_{tg_id}",
                 expires_in=600
@@ -438,7 +371,7 @@ def api_crypto_invoice():
 
 @app.route('/crypto/webhook/<secret>', methods=['POST'])
 def crypto_webhook(secret):
-    if secret != "berm_2026_secret":
+    if secret != CRYPTO_WEBHOOK_SECRET:
         return "Forbidden", 403
 
     data = request.json or {}
