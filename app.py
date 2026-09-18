@@ -23,6 +23,8 @@ ACTIVE_MINES = {}
 ACTIVE_CRASH = {}
 GRID_SIZE = 5
 MINES_COUNT = 3
+
+
 @app.route('/')
 def index():
     return "Bot is running"
@@ -70,47 +72,43 @@ def api_user():
     tg_id, username = get_user_from_init(init)
     if not tg_id:
         return jsonify({'ok': False, 'error': 'unauthorized'}), 401
-
     loop = asyncio.new_event_loop()
     user = loop.run_until_complete(_get_or_create_user(tg_id, username))
     loop.close()
     return jsonify({'ok': True, 'balance': user.balance, 'username': user.username or 'Игрок'})
-    @app.route('/api/spin', methods=['POST'])
+
+
+@app.route('/api/spin', methods=['POST'])
 def api_spin():
     data = request.get_json() or {}
     init = data.get('initData', '')
     bet = int(data.get('bet', 100))
-
     tg_id, _ = get_user_from_init(init)
     if not tg_id:
         return jsonify({'ok': False, 'error': 'unauthorized'}), 401
     if bet < 10:
         return jsonify({'ok': False, 'error': 'min_bet_10'}), 400
-
     loop = asyncio.new_event_loop()
     user = loop.run_until_complete(_get_or_create_user(tg_id, None))
-
     if user.balance < bet:
         loop.close()
         return jsonify({'ok': False, 'error': 'no_money', 'balance': user.balance})
-
     reels = [secrets.randbelow(7) + 1 for _ in range(3)]
-
     if reels[0] == reels[1] == reels[2] == 7:
         win = bet * 50
-        msg = "🎉 ДЖЕКПОТ! Три семёрки!"
+        msg = "ДЖЕКПОТ! Три семёрки!"
     elif reels[0] == reels[1] == reels[2]:
         win = bet * 10
-        msg = "🔥 Три одинаковых! x10"
+        msg = "Три одинаковых! x10"
     elif 7 in reels:
         win = bet * 3
-        msg = "✨ Есть семёрка! x3"
+        msg = "Есть семёрка! x3"
     elif reels[0] == reels[1] or reels[1] == reels[2] or reels[0] == reels[2]:
         win = bet * 2
-        msg = "👍 Две одинаковых! x2"
+        msg = "Две одинаковых! x2"
     else:
         win = 0
-        msg = "😢 Повезёт в следующий раз"
+        msg = "Повезёт в следующий раз"
 
     async def _update():
         async with SessionLocal() as session:
@@ -122,12 +120,13 @@ def api_spin():
 
     new_balance = loop.run_until_complete(_update())
     loop.close()
-
     return jsonify({
         'ok': True, 'reels': reels, 'win': win, 'bet': bet,
         'balance': new_balance, 'message': msg
     })
-    def _calculate_mines_multiplier(opened: int, mines: int = MINES_COUNT) -> float:
+
+
+def _calculate_mines_multiplier(opened: int, mines: int = MINES_COUNT) -> float:
     if opened <= 0:
         return 1.0
     total = GRID_SIZE * GRID_SIZE
@@ -143,25 +142,20 @@ def api_mines_start():
     data = request.get_json() or {}
     init = data.get('initData', '')
     bet = int(data.get('bet', 100))
-
     tg_id, _ = get_user_from_init(init)
     if not tg_id:
         return jsonify({'ok': False, 'error': 'unauthorized'}), 401
     if bet < 10:
         return jsonify({'ok': False, 'error': 'min_bet_10'}), 400
-
     loop = asyncio.new_event_loop()
     user = loop.run_until_complete(_get_or_create_user(tg_id, None))
-
     if user.balance < bet:
         loop.close()
         return jsonify({'ok': False, 'error': 'no_money'})
-
     cells = list(range(GRID_SIZE * GRID_SIZE))
     field = set()
     for _ in range(MINES_COUNT):
         field.add(cells.pop(secrets.randbelow(len(cells))))
-
     ACTIVE_MINES[tg_id] = {'bet': bet, 'field': field, 'opened': set()}
 
     async def _deduct():
@@ -182,19 +176,15 @@ def api_mines_open():
     data = request.get_json() or {}
     init = data.get('initData', '')
     idx = int(data.get('index', -1))
-
     tg_id, _ = get_user_from_init(init)
     if not tg_id or tg_id not in ACTIVE_MINES:
         return jsonify({'ok': False, 'error': 'no_game'})
-
     game = ACTIVE_MINES[tg_id]
     if idx in game['opened']:
         return jsonify({'ok': False, 'error': 'already_opened'})
-
     if idx in game['field']:
         del ACTIVE_MINES[tg_id]
         return jsonify({'ok': True, 'hit_mine': True, 'field': list(game['field']), 'win': 0})
-
     game['opened'].add(idx)
     mult = _calculate_mines_multiplier(len(game['opened']))
     return jsonify({
@@ -212,12 +202,10 @@ def api_mines_cashout():
     tg_id, _ = get_user_from_init(init)
     if not tg_id or tg_id not in ACTIVE_MINES:
         return jsonify({'ok': False, 'error': 'no_game'})
-
     game = ACTIVE_MINES.pop(tg_id)
     opened = len(game['opened'])
     if opened == 0:
         return jsonify({'ok': False, 'error': 'open_at_least_one'})
-
     mult = _calculate_mines_multiplier(opened)
     win = int(game['bet'] * mult)
     loop = asyncio.new_event_loop()
@@ -235,26 +223,21 @@ def api_mines_cashout():
     return jsonify({'ok': True, 'win': win, 'balance': new_balance, 'multiplier': mult})
 
 
-# ============ CRASH (РАКЕТКА) ============
-
 @app.route('/api/crash/start', methods=['POST'])
 def api_crash_start():
     data = request.get_json() or {}
     init = data.get('initData', '')
     bet = int(data.get('bet', 100))
-
     tg_id, _ = get_user_from_init(init)
     if not tg_id:
         return jsonify({'ok': False, 'error': 'unauthorized'}), 401
     if bet < 10:
         return jsonify({'ok': False, 'error': 'min_bet_10'}), 400
-
     loop = asyncio.new_event_loop()
     user = loop.run_until_complete(_get_or_create_user(tg_id, None))
     if user.balance < bet:
         loop.close()
         return jsonify({'ok': False, 'error': 'no_money'})
-
     ACTIVE_CRASH[tg_id] = {
         'bet': bet,
         'crash_point': generate_crash_point(),
@@ -281,11 +264,9 @@ def api_crash_status():
     tg_id, _ = get_user_from_init(init)
     if not tg_id or tg_id not in ACTIVE_CRASH:
         return jsonify({'ok': False, 'error': 'no_game'})
-
     game = ACTIVE_CRASH[tg_id]
     elapsed = time.time() - game['start_time']
     current_mult = round(1.0 + elapsed * 0.5, 2)
-
     if current_mult >= game['crash_point']:
         del ACTIVE_CRASH[tg_id]
         return jsonify({
@@ -293,7 +274,6 @@ def api_crash_status():
             'crash_point': game['crash_point'],
             'multiplier': game['crash_point'], 'win': 0
         })
-
     return jsonify({
         'ok': True, 'crashed': False,
         'multiplier': current_mult,
@@ -308,14 +288,11 @@ def api_crash_cashout():
     tg_id, _ = get_user_from_init(init)
     if not tg_id or tg_id not in ACTIVE_CRASH:
         return jsonify({'ok': False, 'error': 'no_game'})
-
     game = ACTIVE_CRASH.pop(tg_id)
     elapsed = time.time() - game['start_time']
     current_mult = round(1.0 + elapsed * 0.5, 2)
-
     if current_mult >= game['crash_point']:
         return jsonify({'ok': False, 'error': 'already_crashed'})
-
     win = int(game['bet'] * current_mult)
     loop = asyncio.new_event_loop()
 
@@ -330,18 +307,16 @@ def api_crash_cashout():
     new_balance = loop.run_until_complete(_add_win())
     loop.close()
     return jsonify({'ok': True, 'win': win, 'multiplier': current_mult, 'balance': new_balance})
-    # ============ CRYPTO PAY ============
+
 
 @app.route('/api/crypto/invoice', methods=['POST'])
 def api_crypto_invoice():
     data = request.get_json() or {}
     init = data.get('initData', '')
     amount = float(data.get('amount', 1))
-
     tg_id, _ = get_user_from_init(init)
     if not tg_id:
         return jsonify({'ok': False, 'error': 'unauthorized'}), 401
-
     if not CRYPTO_TOKEN:
         return jsonify({'ok': False, 'error': 'crypto_not_configured'}), 500
 
@@ -352,7 +327,7 @@ def api_crypto_invoice():
                 asset='USDT',
                 amount=amount,
                 description="Пополнение BERM Casino",
-                payload=f"crypto_{tg_id}",
+                payload="crypto_" + str(tg_id),
                 expires_in=600
             )
             return invoice.bot_invoice_url
@@ -373,19 +348,15 @@ def api_crypto_invoice():
 def crypto_webhook(secret):
     if secret != CRYPTO_WEBHOOK_SECRET:
         return "Forbidden", 403
-
     data = request.json or {}
-
     if data.get('update_type') == 'invoice_paid':
         payload = data.get('payload', {})
         tg_id_raw = payload.get('payload', '')
         amount_usdt = float(payload.get('amount', 0))
-
         try:
             tg_id = int(tg_id_raw.split('_')[1])
-        except:
+        except Exception:
             tg_id = 0
-
         if tg_id and amount_usdt > 0:
             coins = int(amount_usdt * 1000)
 
@@ -400,11 +371,8 @@ def crypto_webhook(secret):
             loop = asyncio.new_event_loop()
             loop.run_until_complete(_add())
             loop.close()
-
     return "OK", 200
 
-
-# ============ ЗАПУСК ============
 
 def run_flask():
     port = int(os.environ.get("PORT", 5000))
